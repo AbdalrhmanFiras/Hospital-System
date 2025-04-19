@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->string('diseases_name');
             $table->enum('diseases', ['infectious diseases', 'deficiency diseases', ' hereditary diseases', 'physiological diseases']);
             $table->enum('diagnoses', ['clinical', 'medical']);
-            $table->string('allergies')->nullable();
+            $table->text('allergies')->nullable();
             $table->timestamps();
         });
     }

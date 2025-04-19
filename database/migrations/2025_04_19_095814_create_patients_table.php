@@ -15,6 +15,8 @@ return new class extends Migration {
             $table->string('name');
             $table->integer('age');
             $table->string('addres');
+            $table->string('phone');
+            $table->string('email')->unique();
             $table->enum('gender', ['male', 'female']);
             $table->timestamps();
         });
