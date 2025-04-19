@@ -16,13 +16,12 @@ class DoctorController extends Controller
             return response()->json(['message' => 'Doctor not found'], 404);
         }
 
-        $record = $doctor->PatientRecords;
+        $records = $doctor->PatientRecords;
 
-        if (!$record) {
-            return response()->json(['message' => 'Doctor has no Record'], 404);
-
+        if ($records->isEmpty()) {
+            return response()->json(['message' => 'Doctor has no patient records'], 404);
         }
-        return response()->json(['message' => 'Doctor not found'], 404);
 
+        return response()->json(['records' => $records], 200);
     }
 }
