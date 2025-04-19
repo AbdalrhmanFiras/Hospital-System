@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Resources\AuthResource;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\User;
@@ -24,7 +25,10 @@ class AuthController extends Controller
             'password' => Hash::make($request->password)//dont forget to hashing the password
         ]);
 
-        return response()->json($user);
+        return response()->json([
+            'message' => 'User Registerd Successfully',
+            'user' => new AuthResource($user)
+        ], 200);
 
     }
 
@@ -39,7 +43,11 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->firstOrFail();
         $token = $user->createToken('auth-token')->plainTextToken;
 
-        return response()->json([$user, $token]);
+        return response()->json([
+            'message' => 'User login Successfully',
+            'user' => new AuthResource($user),
+            'token' => $token
+        ], 200);
     }
 
     public function logout(Request $request)
