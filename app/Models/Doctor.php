@@ -9,7 +9,7 @@ use App\Models\Diagnosis;
 use App\Models\prescription;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 class Doctor extends Model
-{
+{// ok
     public function Patients(): HasMany
     {
         return $this->hasMany(Patient::class);
