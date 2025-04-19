@@ -4,12 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use Illuminate\Support\Facades\Auth;
+use Laravel\Sanctum\HasApiTokens;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Hash;
-use Auth;
+
 class AuthController extends Controller
 {
+    use HasApiTokens;
+
+
     public function register(RegisterRequest $request)
     {
 
@@ -35,6 +40,12 @@ class AuthController extends Controller
         $token = $user->createToken('auth-token')->plainTextToken;
 
         return response()->json([$user, $token]);
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+        return response()->json(['message' => 'the user logout succesfully']);
     }
 
 
