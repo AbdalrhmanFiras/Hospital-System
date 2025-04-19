@@ -13,8 +13,10 @@ return new class extends Migration {
         Schema::create('prescriptions', function (Blueprint $table) {
             $table->id();
             $table->string('medication_name');
-            $table->string('dosage_amount')->nullable(); // e.g. "500mg"
-            $table->string('frequency')->nullable();     // e.g. "Twice a day"
+            $table->foreignId('doctor_id')->constrained()->onDelete('cascade');
+            $table->foreignId('patient_record_id')->constrained()->onDelete('cascade');
+            $table->string('dosage_amount')->nullable();
+            $table->string('frequency')->nullable();
             $table->string('duration');
             $table->timestamps();
         });
