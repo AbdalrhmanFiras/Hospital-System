@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Diagnosis;
 use App\Models\Doctor;
 use App\Models\Patient;
+use App\Models\prescription;
 use Illuminate\Http\Request;
 
 class DoctorController extends Controller
@@ -109,6 +110,45 @@ class DoctorController extends Controller
         return response()->json(['message' => 'Diagnosis Added Successfully', 'diagnosis' => $diagnosis], 200);
     }
 
+
+    public function Prescription(Request $request)
+    {
+
+
+        $request->validate([
+            'medication_name' => 'required|string',
+            'doctor_name' => 'required|string|exists:doctors,id',
+            'patient_name' => 'required|string|exists:patient,id',
+            'diagnosis_id' => 'required|string|exists:diagnosis,id',
+            'dosage_amount' => 'nullable|string',
+            'frequency' => 'nullable|string',
+            'duration' => 'required|string',
+        ]);
+
+        $doctor_id = $this->getDoctorIdByName($request->doctor_name);
+        $patient_id = $this->getPatientIdByName($request->patient_name);
+
+        if (!$doctor_id || !$patient_id) {
+            return response()->json(['message' => 'Doctor or Patient not found'], 404);
+        }
+
+        $Prescription = prescription::create([
+            'medication_name' => $request->medication_name,
+            'doctor_id' => $doctor_id,
+            'patient_id' => $patient_id,
+            'diagnosis_id' => $request->diagnosis_id,
+            'dosage_amount' => $request->dosage_amount,
+            'frequency' => $request->frequency,
+            'duration' => $request->duration
+
+        ]);
+
+
+
+        return response()->json(['message' => 'Prescription Added Successfully', 'prescription' => $Prescription], 200);
+
+
+    }
 
 
 }
