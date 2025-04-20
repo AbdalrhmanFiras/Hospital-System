@@ -9,6 +9,8 @@ use App\Models\Doctor;
 
 class Diagnosis extends Model
 {
+
+    protected $fillable = ['diseases_name', 'diseases', 'diagnoses', 'allergies', 'doctor_id', 'patient_id'];
     public function Doctors(): BelongsTo
     {
         return $this->belongsTo(Doctor::class);
