@@ -64,7 +64,6 @@ class DoctorController extends Controller
     public function getPatientIdByName($patient_name)
     {
         return Patient::where('name', $patient_name)->value('id');
-
     }
     // public function FindDoctorbyname($doctor_name)
     // {
@@ -106,6 +105,7 @@ class DoctorController extends Controller
             'doctor_id' => $doctor_id,
             'patient_id' => $patient_id,
         ]);
+        $diagnosis->save();
 
         return response()->json(['message' => 'Diagnosis Added Successfully', 'diagnosis' => $diagnosis], 200);
     }
@@ -113,17 +113,16 @@ class DoctorController extends Controller
 
     public function Prescription(Request $request)
     {
-
-
         $request->validate([
             'medication_name' => 'required|string',
-            'doctor_name' => 'required|string|exists:doctors,id',
-            'patient_name' => 'required|string|exists:patient,id',
-            'diagnosis_id' => 'required|string|exists:diagnosis,id',
+            'diagnosis_id' => 'required|string|exists:diagnoses,id',
             'dosage_amount' => 'nullable|string',
             'frequency' => 'nullable|string',
             'duration' => 'required|string',
+            'doctor_name' => 'required|string',
+            'patient_name' => 'required|string',
         ]);
+
 
         $doctor_id = $this->getDoctorIdByName($request->doctor_name);
         $patient_id = $this->getPatientIdByName($request->patient_name);
@@ -132,22 +131,17 @@ class DoctorController extends Controller
             return response()->json(['message' => 'Doctor or Patient not found'], 404);
         }
 
-        $Prescription = prescription::create([
+        $prescription = prescription::create([
             'medication_name' => $request->medication_name,
             'doctor_id' => $doctor_id,
             'patient_id' => $patient_id,
             'diagnosis_id' => $request->diagnosis_id,
             'dosage_amount' => $request->dosage_amount,
             'frequency' => $request->frequency,
-            'duration' => $request->duration
-
+            'duration' => $request->duration,
         ]);
 
-
-
-        return response()->json(['message' => 'Prescription Added Successfully', 'prescription' => $Prescription], 200);
-
-
+        return response()->json(['message' => 'Prescription Added Successfully', 'prescription' => $prescription], 200);
     }
 
 
