@@ -12,7 +12,8 @@ class ManagementController extends Controller
             'name' => 'required|string',
             'Specialization' => 'required|string',
             'Degree' => 'required|string|in:Bachelor,Master,Doctoral',
-            'Available' => 'requied|string|in:Sunday, Monday, Tuesday, Wednesday, Thursday, Saturday',
+            'Available' => 'requied|array',
+            'Availabl.*' => 'required|string|string|in:Sunday, Monday, Tuesday, Wednesday, Thursday, Saturday',
 
         ]);
 
