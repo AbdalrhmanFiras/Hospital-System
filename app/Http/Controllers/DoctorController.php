@@ -53,7 +53,11 @@ class DoctorController extends Controller
 
         // doctor_id , patient_id , diagnosis_id , preseciton_id
 
+    }
 
+    public function Diagnosis(Request $request){
+
+        $request->
 
 
 
