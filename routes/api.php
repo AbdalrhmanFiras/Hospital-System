@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\ReceptionController;
+
 use App\Models\Doctor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -17,3 +19,4 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 
 Route::get('doctor/{id}/all-record', [DoctorController::class, 'getAllPatientRecord']);
 Route::get('doctor/{id}/record', [DoctorController::class, 'getPatientRecord']);
+Route::post('reception/patient', [ReceptionController::class, 'AddPatient']);
