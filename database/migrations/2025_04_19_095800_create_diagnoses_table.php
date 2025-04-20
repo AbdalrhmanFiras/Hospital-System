@@ -13,8 +13,8 @@ return new class extends Migration {
         Schema::create('diagnoses', function (Blueprint $table) {
             $table->id();
             $table->string('diseases_name');
-            $table->foreignId('doctor_id')->constrained()->onDelete('cascade');
-            $table->foreignId('patient_record_id')->constrained()->onDelete('cascade');
+            $table->foreignId('doctor_id')->constrained('doctors')->onDelete('cascade');
+            $table->foreignId('patient_id')->constrained('patients')->onDelete('cascade');
             $table->enum('diseases', ['infectious diseases', 'deficiency diseases', ' hereditary diseases', 'physiological diseases']);
             $table->enum('diagnoses', ['clinical', 'medical']);
             $table->text('allergies')->nullable();
