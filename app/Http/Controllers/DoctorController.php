@@ -55,6 +55,29 @@ class DoctorController extends Controller
     //     // doctor_id , patient_id , diagnosis_id , preseciton_id
 
     // }
+    public function getDoctorIdByName($doctor_name)
+    {
+        return Doctor::where('name', $doctor_name)->value('id');
+    }
+
+    public function getPatientIdByName($patient_name)
+    {
+        return Patient::where('name', $patient_name)->value('id');
+
+    }
+    // public function FindDoctorbyname($doctor_name)
+    // {
+
+    //     $doctor_id = Doctor::when($doctor_name, function ($query, $doctor_name) {
+    //         return $query->where('name', $doctor_name);
+    //     })->value('id');
+
+    //     if (!$doctor_id) {
+    //         return response()->json(['message' => 'there is no doctor like this name']);
+    //     }
+
+    //     return response()->json(['doctor_id' => $doctor_id]);
+    // }
 
     public function Diagnosis(Request $request)
     {
@@ -63,25 +86,28 @@ class DoctorController extends Controller
             'diseases' => 'required|string|in:infectious diseases, deficiency diseases, hereditary diseases, physiological diseases',
             'diagnoses' => 'required|string|in:clinical,medical',
             'allergies' => 'nullable|text',
-            'doctor_id' => 'required|exists:doctors,id',
-            'patient_id' => 'required|exists:patients,id'
+            'doctor_name' => 'required|string',
+            'patient_name' => 'required|string',
         ]);
 
+        $doctor_id = $this->getDoctorIdByName($request->doctor_name);
+        $patient_id = $this->getPatientIdByName($request->patient_name);
+
+        if (!$doctor_id || !$patient_id) {
+            return response()->json(['message' => 'Doctor or Patient not found'], 404);
+        }
 
         $diagnosis = Diagnosis::create([
             'diseases_name' => $request->diseases_name,
             'diseases' => $request->diseases,
             'diagnoses' => $request->diagnoses,
             'allergies' => $request->allergies,
-            'doctor_id' => $request->doctor_id,
-            'patient_id' => $request->patient_id,
+            'doctor_id' => $doctor_id,
+            'patient_id' => $patient_id,
         ]);
 
-
-        return response()->json(['message' => 'Diagnosis Add Successfully', 'diagnosis' => $diagnosis], 200);
-
+        return response()->json(['message' => 'Diagnosis Added Successfully', 'diagnosis' => $diagnosis], 200);
     }
-
 
 
 

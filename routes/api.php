@@ -18,10 +18,11 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-//////////////////////////////////////////////Doctor
+//////////////////////////////////////////////Doctor  
 Route::get('doctor/{id}/all-record', [DoctorController::class, 'getAllPatientRecord']);
 Route::get('doctor/{id}/record', [DoctorController::class, 'getPatientRecord']);
 Route::post('doctor/diagnosis', [DoctorController::class, 'Diagnosis']);
+Route::get('doctor/Find/{doctor_name}', [DoctorController::class, 'FindDoctorbyname']);
 
 //////////////////////////////////////////////Reception
 Route::post('reception/patient', [ReceptionController::class, 'AddPatient']);
