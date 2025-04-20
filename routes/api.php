@@ -15,4 +15,5 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+Route::get('doctor/{id}/all-record', [DoctorController::class, 'getAllPatientRecord']);
 Route::get('doctor/{id}/record', [DoctorController::class, 'getPatientRecord']);
