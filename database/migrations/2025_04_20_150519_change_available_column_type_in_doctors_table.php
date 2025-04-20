@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('doctors', function (Blueprint $table) {
-            $table->json('Available')->nullable()->change();
+            $table->json('Available')->change();
         });
     }
 
@@ -21,7 +21,7 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('doctors', function (Blueprint $table) {
-            $table->enum('Available', ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Saturday'])->change();
+            $table->enum('Available', ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'])->change();
         });
     }
 };

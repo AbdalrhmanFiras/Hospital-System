@@ -10,6 +10,15 @@ use App\Models\prescription;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 class Doctor extends Model
 {// ok
+
+    protected $fillable = [
+        'name',
+        'Specialization',
+        'Degree',
+        'Available',
+        'phone',
+        'email',
+    ];
     public function Patients(): HasMany
     {
         return $this->hasMany(Patient::class);

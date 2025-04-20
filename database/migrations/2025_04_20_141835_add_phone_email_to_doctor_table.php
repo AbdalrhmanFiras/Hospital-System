@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::table('doctors', function (Blueprint $table) {
             $table->string('phone', 12);
-            $table->string('email')->nullable();
+            $table->string('email')->unique()->nullable();
         });
     }
 
