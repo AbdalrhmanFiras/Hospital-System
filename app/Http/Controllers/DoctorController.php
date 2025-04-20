@@ -44,6 +44,21 @@ class DoctorController extends Controller
         return response()->json(['records' => $records], 200);
     }
 
+    public function CreatePatientRecord(Request $request)
+    {
+        $request->validate([
+            'doctor_id' => 'required|string|exists:doctors,id'
+
+        ]);
+
+        // doctor_id , patient_id , diagnosis_id , preseciton_id
+
+
+
+
+
+    }
+
 
 
 
