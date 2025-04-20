@@ -14,10 +14,6 @@ class Diagnosis extends Model
         return $this->belongsTo(Doctor::class);
     }
 
-    public function Patient_records(): BelongsTo
-    {
-        return $this->belongsTo(PatientRecord::class);
-    }
 
     public function Patients(): BelongsTo
     {

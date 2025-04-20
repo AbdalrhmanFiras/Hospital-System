@@ -15,10 +15,9 @@ return new class extends Migration {
             $table->foreignId('doctor_id')->constrained('doctors')->onDelete('cascade');
             $table->foreignId('patient_id')->constrained('patients')->onDelete('cascade');
             $table->foreignId('prescription_id')->constrained('prescriptions');
-            $table->foreignId('diagnosis_id')->constrained('diagnoses'); // ✅ FIXED
-
+            $table->foreignId('diagnosis_id')->constrained('diagnoses');
             $table->timestamps();
-
+            // Dont forget to sort the migartions files 
         });
     }
 
