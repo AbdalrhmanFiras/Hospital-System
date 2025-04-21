@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\DiagnosisRequest;
 use App\Http\Requests\PrescriptionRequest;
+use App\Http\Requests\PatientRecordRequest;
 use App\Models\Diagnosis;
 use App\Models\Doctor;
 use App\Models\Patient;
@@ -58,14 +59,8 @@ class DoctorController extends Controller
     }
 
 
-    public function CreatePatientRecord(Request $request)
+    public function CreatePatientRecord(PatientRecordRequest $request)
     {
-        $request->validate([
-            'doctor_name' => 'required|string',
-            'patient_name' => 'required|string',
-            'diseases_name' => 'required|string',
-            'medication_name' => 'required|string'
-        ]);
 
 
         $doctor_id = $this->getDoctorIdByName($request->doctor_name);
