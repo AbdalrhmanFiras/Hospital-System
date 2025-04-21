@@ -26,7 +26,9 @@ class DoctorController extends Controller
     {
 
 
-        $diagnosis = Diagnosis::where('name', $diagnosis_name)->first();
+        $diagnosis = Diagnosis::where('name', $diagnosis_name)->first(['id', 'doctor_id', 'patient_id']);
+
+
         // first() : grab me the full model
 
         if (!$diagnosis) {
@@ -41,6 +43,20 @@ class DoctorController extends Controller
             'd_patient_id' => $diagnosis_patient_id
         ];
 
+    }
+
+    public function getprescriptionByName($prescription_name)
+    {
+
+        $Prescription = prescription::where('name', $prescription_name)->first(['id', 'doctor_id', 'patient_id']);
+
+        $prescription_doctor_id = $Prescription->doctor_id;
+        $prescription_patient_id = $Prescription->patient_id;
+
+        return [
+            'p_doctor_id' => $prescription_doctor_id,
+            'p_patient_id' => $prescription_patient_id
+        ];
     }
 
 
@@ -84,13 +100,13 @@ class DoctorController extends Controller
             'doctor_name' => 'required|string',
             'patient_name' => 'required|string',
             'diagnosis_name' => 'required|string',
-            'prescription' => 'required|string'
+            'prescription_name' => 'required|string'
         ]);
 
 
         $doctor_id = $this->getDoctorIdByName($request->doctor_name);
         $patient_id = $this->getPatientIdByName($request->patient_name);
-
+        $diagnosis_model = $this->getdiagnosisByName($request->diagnosis);
 
 
         // doctor_id , patient_id , diagnosis_id , preseciton_id

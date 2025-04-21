@@ -12,6 +12,17 @@ use App\Models\Diagnosis;
 use App\Models\prescription;
 class PatientRecord extends Model
 {
+    protected $fillable = [
+
+        'doctor_name',
+        'patient_name',
+        'diagnosis_name',
+        'prescription_name',
+        'doctor_id',
+        'patient_id',
+        'diagnosis_id',
+        'prescription_id',
+    ];
     public function Doctors(): BelongsTo
     {
         return $this->belongsTo(Doctor::class);
