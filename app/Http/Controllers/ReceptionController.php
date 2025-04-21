@@ -153,6 +153,8 @@ class ReceptionController extends Controller
     {// it should be i another controller 
         $doctor_id = Doctor::where('Name', $doctor_name)->first('id');
 
+
+
         if (!$doctor_id) {
             return response()->json(['message' => 'Doctor not found'], 404);
         }
