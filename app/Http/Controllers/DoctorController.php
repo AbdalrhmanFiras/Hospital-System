@@ -202,17 +202,20 @@ class DoctorController extends Controller
     {//doctor
         $request->validate([
             'medication_name' => 'required|string',
-            'diagnosis_id' => 'required|string|exists:diagnoses,id',
             'dosage_amount' => 'nullable|string',
             'frequency' => 'nullable|string',
             'duration' => 'required|string',
             'doctor_name' => 'required|string',
             'patient_name' => 'required|string',
+            'diagnosis_name' => 'required|string',
         ]);
 
         $doctor_id = $this->getDoctorIdByName($request->doctor_name);
         $patient_id = $this->getPatientIdByName($request->patient_name);
-
+        $daignosis_model = $this->getdiagnosisByName($request->diagnosis_name);
+        if (!is_array($daignosis_model)) {
+            return response()->json(['message' => 'Diagnosis not found'], 404);
+        }
         if (!$doctor_id) {
             return response()->json(['message' => 'Doctor not found'], 404);
         }
@@ -223,10 +226,10 @@ class DoctorController extends Controller
 
         $prescription = Prescription::create([
             'medication_name' => $request->medication_name,
-            'diagnosis_id' => $request->diagnosis_id,
             'dosage_amount' => $request->dosage_amount,
             'frequency' => $request->frequency,
             'duration' => $request->duration,
+            'diagnosis_id' => $daignosis_model['id'],
             'doctor_id' => $doctor_id,
             'patient_id' => $patient_id,
         ]);
