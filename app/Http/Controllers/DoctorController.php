@@ -61,6 +61,7 @@ class DoctorController extends Controller
         return Doctor::where('name', $doctor_name)->value('id');
     }
 
+
     public function getPatientIdByName($patient_name)
     {
         return Patient::where('name', $patient_name)->value('id');
@@ -105,7 +106,6 @@ class DoctorController extends Controller
             'doctor_id' => $doctor_id,
             'patient_id' => $patient_id,
         ]);
-        $diagnosis->save();
 
         return response()->json(['message' => 'Diagnosis Added Successfully', 'diagnosis' => $diagnosis], 200);
     }
@@ -123,7 +123,6 @@ class DoctorController extends Controller
             'patient_name' => 'required|string',
         ]);
 
-
         $doctor_id = $this->getDoctorIdByName($request->doctor_name);
         $patient_id = $this->getPatientIdByName($request->patient_name);
 
@@ -131,18 +130,27 @@ class DoctorController extends Controller
             return response()->json(['message' => 'Doctor or Patient not found'], 404);
         }
 
-        $prescription = prescription::create([
+        if (!$patient_id) {
+            return response()->json([
+                'message' => 'Patient not found',
+                'patient_name' => $request->patient_name,
+                'patient_id' => $patient_id
+            ], 404);
+        }
+        $prescription = Prescription::create([
             'medication_name' => $request->medication_name,
-            'doctor_id' => $doctor_id,
-            'patient_id' => $patient_id,
             'diagnosis_id' => $request->diagnosis_id,
             'dosage_amount' => $request->dosage_amount,
             'frequency' => $request->frequency,
             'duration' => $request->duration,
+            'doctor_id' => $doctor_id,
+            'patient_id' => $patient_id,
         ]);
 
-        return response()->json(['message' => 'Prescription Added Successfully', 'prescription' => $prescription], 200);
+        return response()->json([
+            'message' => 'Prescription Added Successfully',
+            'prescription' => $prescription
+        ], 200);
     }
-
 
 }
