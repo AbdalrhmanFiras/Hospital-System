@@ -118,26 +118,10 @@ class DoctorController extends Controller
     }
 
 
-    public function getAllPatientRecord($doctor_id)
-    {// it should be i another controller 
-        $doctor = Doctor::find($doctor_id);
 
-        if (!$doctor) {
-            return response()->json(['message' => 'Doctor not found'], 404);
-        }
-
-        $records = $doctor->PatientRecords;
-
-        if ($records->isEmpty()) {
-            return response()->json(['message' => 'Doctor has no patient records'], 404);
-        }
-
-        return response()->json(['records' => $records], 200);
-    }
-
-    public function getPatientRecord($patient_id)
+    public function getPatientRecord($patient_name)
     {//doctor 
-        $patient = Patient::find($patient_id);
+        $patient = Patient::find($patient_name);
 
         if (!$patient) {
             return response()->json(['message' => 'patient not found'], 404);

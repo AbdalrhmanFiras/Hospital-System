@@ -19,8 +19,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 
 
 //////////////////////////////////////////////Doctor  
-Route::get('doctor/{id}/all-record', [DoctorController::class, 'getAllPatientRecord']);
-Route::get('doctor/{id}/record', [DoctorController::class, 'getPatientRecord']);
+Route::get('doctor/{name}/record', [DoctorController::class, 'getPatientRecord']);
 Route::post('doctor/diagnosis', [DoctorController::class, 'Diagnosis']);
 Route::post('doctor/prescription', [DoctorController::class, 'Prescription']);
 Route::post('doctor/patient/record', [DoctorController::class, 'CreatePatientRecord']);
@@ -30,6 +29,7 @@ Route::get('doctor/Find/{doctor_name}', [DoctorController::class, 'FindDoctorbyn
 //////////////////////////////////////////////Reception
 Route::post('reception/patient', [ReceptionController::class, 'AddPatient']);
 Route::post('reception/patient/record', [ReceptionController::class, 'CreatePatientRecord']);
+Route::get('reception/doctor-record/{name}', [ReceptionController::class, 'getAllPatientRecord']);
 
 //////////////////////////////////////////////Management
 Route::post('management/doctor', [ManagementController::class, 'DoctorSignin']);
