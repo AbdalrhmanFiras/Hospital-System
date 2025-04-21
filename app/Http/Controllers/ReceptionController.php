@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PatientRequest;
 use App\Models\Patient;
 use App\Models\Diagnosis;
 use App\Models\Doctor;
@@ -168,28 +169,6 @@ class ReceptionController extends Controller
         return response()->json(['records' => $records], 200);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         //
@@ -198,16 +177,8 @@ class ReceptionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function AddPatient(Request $request)
+    public function AddPatient(PatientRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'age' => 'required|integer',
-            'address' => 'required|string',
-            'phone' => 'required|string|min:7',
-            'email' => 'nullable|email|unique',
-            'gender' => 'required|string|in:male,female'
-        ]);
 
 
         $patient = Patient::create([
