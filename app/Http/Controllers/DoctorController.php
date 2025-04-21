@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\DiagnosisRequest;
 use App\Http\Requests\PrescriptionRequest;
 use App\Http\Requests\PatientRecordRequest;
+use App\Http\Resources\DiagnosisResource;
 use App\Models\Diagnosis;
 use App\Models\Doctor;
 use App\Models\Patient;
@@ -168,8 +169,10 @@ class DoctorController extends Controller
             'patient_id' => $patient_id,
         ]);
 
-        return response()->json(['message' => 'Diagnosis Added Successfully', 'diagnosis' => $diagnosis], 200);
+        return response()->json(['message' => 'Diagnosis Added Successfully', 'diagnosis' => new DiagnosisResource($diagnosis)], 200);
     }
+
+
 
 
     public function Prescription(PrescriptionRequest $request)
