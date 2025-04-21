@@ -11,6 +11,38 @@ use Illuminate\Http\Request;
 class DoctorController extends Controller
 {
 
+    public function getDoctorIdByName($doctor_name)
+    {
+        return Doctor::where('name', $doctor_name)->value('id');
+    }
+
+
+    public function getPatientIdByName($patient_name)
+    {
+        return Patient::where('name', $patient_name)->value('id');
+    }
+
+    public function getdiagnosisByName($diagnosis_name)
+    {
+
+
+        $diagnosis = Diagnosis::where('name', $diagnosis_name)->first();
+        // first() : grab me the full model
+
+        if (!$diagnosis) {
+            return response()->json(['Diagnosis not found'], 404);
+        }
+
+        $diagnosis_doctor_id = $diagnosis->doctor_id;
+        $diagnosis_patient_id = $diagnosis->patient_id;
+
+        return [
+            'd_doctor_id' => $diagnosis_doctor_id,
+            'd_patient_id' => $diagnosis_patient_id
+        ];
+
+    }
+
 
     public function getAllPatientRecord($doctor_id)
     {// it should be i another controller 
@@ -46,26 +78,25 @@ class DoctorController extends Controller
         return response()->json(['records' => $records], 200);
     }
 
-    // public function CreatePatientRecord(Request $request)
-    // {
-    //     $request->validate([
-    //         'doctor_id' => 'required|string|exists:doctors,id'
-
-    //     ]);
-
-    //     // doctor_id , patient_id , diagnosis_id , preseciton_id
-
-    // }
-    public function getDoctorIdByName($doctor_name)
+    public function CreatePatientRecord(Request $request)
     {
-        return Doctor::where('name', $doctor_name)->value('id');
+        $request->validate([
+            'doctor_name' => 'required|string',
+            'patient_name' => 'required|string',
+            'diagnosis_name' => 'required|string',
+            'prescription' => 'required|string'
+        ]);
+
+
+        $doctor_id = $this->getDoctorIdByName($request->doctor_name);
+        $patient_id = $this->getPatientIdByName($request->patient_name);
+
+
+
+        // doctor_id , patient_id , diagnosis_id , preseciton_id
+
     }
 
-
-    public function getPatientIdByName($patient_name)
-    {
-        return Patient::where('name', $patient_name)->value('id');
-    }
     // public function FindDoctorbyname($doctor_name)
     // {
 
