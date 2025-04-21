@@ -6,8 +6,8 @@ use App\Http\Requests\DiagnosisRequest;
 use App\Http\Requests\PrescriptionRequest;
 use App\Http\Requests\PatientRecordRequest;
 use App\Http\Resources\DiagnosisResource;
-use App\Http\Resources\PatientRecordResoure;
-use App\Http\Resources\PrescriptionResoure;
+use App\Http\Resources\PatientRecordResource;
+use App\Http\Resources\PrescriptionResource;
 use App\Models\Diagnosis;
 use App\Models\Doctor;
 use App\Models\Patient;
@@ -113,7 +113,7 @@ class DoctorController extends Controller
 
         return response()->json([
             'message' => 'Patient Record Created Successfully',
-            'record' => new PatientRecordResoure($record->load('Doctors', 'Patinets', 'Diagnosises', 'Prescriptions')),
+            'record' => new PatientRecordResource($record->load('Doctors', 'Patinets', 'Diagnosises', 'Prescriptions')),
         ], 201);
 
 
@@ -217,7 +217,7 @@ class DoctorController extends Controller
 
         return response()->json([
             'message' => 'Prescription Added Successfully',
-            'prescription' => new PrescriptionResoure($prescription->load('diagnosis')),
+            'prescription' => new PrescriptionResource($prescription->load('diagnosis')),
         ], 200);
     }
 

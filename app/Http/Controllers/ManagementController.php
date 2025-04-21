@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\DoctorRequest;
-use App\Http\Resources\DoctorResoure;
+use App\Http\Resources\DoctorResource;
 use App\Models\Doctor;
 use Illuminate\Http\Request;
 
@@ -23,7 +23,7 @@ class ManagementController extends Controller
             'email' => $request->email
         ]);
 
-        return response()->json(['message' => 'Doctor signin successfully', 'doctor' => new DoctorResoure($doctor)], 200);
+        return response()->json(['message' => 'Doctor signin successfully', 'doctor' => new DoctorResource($doctor)], 200);
 
 
     }
