@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PatientRequest;
+use App\Http\Resources\PatientResource;
 use App\Models\Patient;
 use App\Models\Diagnosis;
 use App\Models\Doctor;
@@ -180,7 +181,6 @@ class ReceptionController extends Controller
     public function AddPatient(PatientRequest $request)
     {
 
-
         $patient = Patient::create([
             'name' => $request->name,
             'age' => $request->age,
@@ -193,7 +193,7 @@ class ReceptionController extends Controller
 
         return response()->json([
             'message' => 'patient loggin successfully',
-            'patient' => $patient
+            'patient' => new PatientResource($patient)
         ], 200);
 
     }
