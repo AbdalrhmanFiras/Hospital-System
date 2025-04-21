@@ -16,8 +16,8 @@ class PatientRecord extends Model
 
         'doctor_name',
         'patient_name',
-        'diagnosis_name',
-        'prescription_name',
+        'medication_name',
+        'diseases_name',
         'doctor_id',
         'patient_id',
         'diagnosis_id',

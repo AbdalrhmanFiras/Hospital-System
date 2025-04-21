@@ -22,11 +22,11 @@ class DoctorController extends Controller
         return Patient::where('name', $patient_name)->value('id');
     }
 
-    public function getdiagnosisByName($diagnosis_name)
+    public function getdiagnosisByName($diseases_name)
     {
 
 
-        $diagnosis = Diagnosis::where('name', $diagnosis_name)->first(['id', 'doctor_id', 'patient_id']);
+        $diagnosis = Diagnosis::where('diseases_name', $diseases_name)->first(['id', 'doctor_id', 'patient_id']);
 
 
         // first() : grab me the full model
@@ -45,10 +45,10 @@ class DoctorController extends Controller
 
     }
 
-    public function getprescriptionByName($prescription_name)
+    public function getprescriptionByName($medication_name)
     {
 
-        $Prescription = prescription::where('name', $prescription_name)->first(['id', 'doctor_id', 'patient_id']);
+        $Prescription = prescription::where('name', $medication_name)->first(['id', 'doctor_id', 'patient_id']);
 
         $prescription_doctor_id = $Prescription->doctor_id;
         $prescription_patient_id = $Prescription->patient_id;
@@ -57,6 +57,33 @@ class DoctorController extends Controller
             'p_doctor_id' => $prescription_doctor_id,
             'p_patient_id' => $prescription_patient_id
         ];
+    }
+
+
+    public function CreatePatientRecord(Request $request)
+    {
+        $request->validate([
+            'doctor_name' => 'required|string',
+            'patient_name' => 'required|string',
+            'diseases_name' => 'required|string',
+            'medication_name' => 'required|string'
+        ]);
+
+
+        $doctor_id = $this->getDoctorIdByName($request->doctor_name);
+        $patient_id = $this->getPatientIdByName($request->patient_name);
+        $diagnosis_model = $this->getdiagnosisByName($request->diseases_name);
+        $prescription_model = $this->getprescriptionByName($request->medication_name);
+
+        if (
+            $doctor_id == $diagnosis_model->doctor_id && $patient_id == $diagnosis_model->patient_id &&
+            $doctor_id == $prescription_model->doctor_id && $patient_id == $prescription_model->patient_id
+        ) {
+
+        }
+
+
+
     }
 
 
@@ -94,24 +121,6 @@ class DoctorController extends Controller
         return response()->json(['records' => $records], 200);
     }
 
-    public function CreatePatientRecord(Request $request)
-    {
-        $request->validate([
-            'doctor_name' => 'required|string',
-            'patient_name' => 'required|string',
-            'diagnosis_name' => 'required|string',
-            'prescription_name' => 'required|string'
-        ]);
-
-
-        $doctor_id = $this->getDoctorIdByName($request->doctor_name);
-        $patient_id = $this->getPatientIdByName($request->patient_name);
-        $diagnosis_model = $this->getdiagnosisByName($request->diagnosis);
-
-
-        // doctor_id , patient_id , diagnosis_id , preseciton_id
-
-    }
 
     // public function FindDoctorbyname($doctor_name)
     // {
