@@ -14,45 +14,27 @@ class DoctorController extends Controller
 
     public function getDoctorIdByName($doctor_name)
     {
-        $doctor = Doctor::where('name', $doctor_name)->value('id');
-        if (!$doctor) {
-            return response()->json(['message' => 'patient not found'], 404);
-        }
-
-        return $doctor;
+        return Doctor::where('name', $doctor_name)->value('id');
     }
-
 
     public function getPatientIdByName($patient_name)
     {
-        $patient = Patient::where('name', $patient_name)->value('id');
-
-        if (!$patient) {
-            return response()->json(['message' => 'patient not found'], 404);
-        }
-
-        return $patient;
+        return Patient::where('name', $patient_name)->value('id');
     }
+
 
     public function getdiagnosisByName($diseases_name)
     {
 
-
         $diagnosis = Diagnosis::where('diseases_name', $diseases_name)->first(['id', 'doctor_id', 'patient_id']);
-
-
-        // first() : grab me the full model
-
         if (!$diagnosis) {
-            return response()->json(['Diagnosis not found'], 404);
+            return null;
         }
 
-        $diagnosis_doctor_id = $diagnosis->doctor_id;
-        $diagnosis_patient_id = $diagnosis->patient_id;
-
         return [
-            'd_doctor_id' => $diagnosis_doctor_id,
-            'd_patient_id' => $diagnosis_patient_id
+            'id' => $diagnosis->id,
+            'd_doctor_id' => $diagnosis->doctor_id,
+            'd_patient_id' => $diagnosis->patient_id
         ];
 
     }
@@ -60,14 +42,16 @@ class DoctorController extends Controller
     public function getprescriptionByName($medication_name)
     {
 
-        $Prescription = prescription::where('medication_name', $medication_name)->first(['id', 'doctor_id', 'patient_id']);
 
-        $prescription_doctor_id = $Prescription->doctor_id;
-        $prescription_patient_id = $Prescription->patient_id;
+        $prescription = Prescription::where('medication_name', $medication_name)->first(['id', 'doctor_id', 'patient_id']);
+        if (!$prescription) {
+            return null;
+        }
 
         return [
-            'p_doctor_id' => $prescription_doctor_id,
-            'p_patient_id' => $prescription_patient_id
+            'id' => $prescription->id,
+            'p_doctor_id' => $prescription->doctor_id,
+            'p_patient_id' => $prescription->patient_id
         ];
     }
 
@@ -87,31 +71,48 @@ class DoctorController extends Controller
         $diagnosis_model = $this->getdiagnosisByName($request->diseases_name);
         $prescription_model = $this->getprescriptionByName($request->medication_name);
 
-        if (!$doctor_id || !$patient_id || !$diagnosis_model || !$prescription_model) {
-            return response()->json(['message' => 'Doctor, Patient, Diagnosis, or Prescription not found'], 404);
+        // if (!$doctor_id || !$patient_id || !$diagnosis_model || !$prescription_model) {
+        //     return response()->json(['message' => 'Doctor, Patient, Diagnosis, or Prescription not found'], 404);
+        // }
+
+        //more dynamic 
+        if (!$doctor_id) {
+            return response()->json(['message' => 'Doctor not found'], 404);
+        }
+
+        if (!$patient_id) {
+            return response()->json(['message' => 'Patient not found'], 404);
+        }
+
+        if (!$diagnosis_model) {
+            return response()->json(['message' => 'Diagnosis not found'], 404);
+        }
+
+        if (!$prescription_model) {
+            return response()->json(['message' => 'Prescription not found'], 404);
         }
 
 
-        if (
-            $doctor_id == $diagnosis_model['d_doctor_id'] && $patient_id == $diagnosis_model['d_patient_id'] &&
-            $doctor_id == $prescription_model['p_doctor_id'] && $patient_id == $prescription_model['p_patient_id']
+
+        if (// another check
+            $doctor_id !== $diagnosis_model['d_doctor_id'] && $patient_id !== $diagnosis_model['d_patient_id'] &&
+            $doctor_id !== $prescription_model['p_doctor_id'] && $patient_id !== $prescription_model['p_patient_id']
         ) {
-            $record = PatientRecord::create([
-                'doctor_id' => $doctor_id,
-                'patient_id' => $patient_id,
-                'diagnosis_id' => Diagnosis::where('diseases_name', $request->diseases_name)->value('id'),
-                'prescription_id' => prescription::where('medication_name', $request->medication_name)->value('id')
-            ]);
-
-
-
             return response()->json([
-                'message' => 'Patient Record Created Successfully',
-                'record' => $record
-            ], 201);
-
-
+                'message' => 'Doctor or Patient mismatch with Diagnosis or Prescription record'
+            ], 400);
         }
+        $record = PatientRecord::create([
+            'doctor_id' => $doctor_id,
+            'patient_id' => $patient_id,
+            'diagnosis_id' => $diagnosis_model['id'],
+            'prescription_id' => $prescription_model['id']
+        ]);
+
+        return response()->json([
+            'message' => 'Patient Record Created Successfully',
+            'record' => $record
+        ], 201);
 
 
     }
@@ -212,17 +213,14 @@ class DoctorController extends Controller
         $doctor_id = $this->getDoctorIdByName($request->doctor_name);
         $patient_id = $this->getPatientIdByName($request->patient_name);
 
-        if (!$doctor_id || !$patient_id) {
-            return response()->json(['message' => 'Doctor or Patient not found'], 404);
+        if (!$doctor_id) {
+            return response()->json(['message' => 'Doctor not found'], 404);
         }
 
         if (!$patient_id) {
-            return response()->json([
-                'message' => 'Patient not found',
-                'patient_name' => $request->patient_name,
-                'patient_id' => $patient_id
-            ], 404);
+            return response()->json(['message' => 'Patient not found'], 404);
         }
+
         $prescription = Prescription::create([
             'medication_name' => $request->medication_name,
             'diagnosis_id' => $request->diagnosis_id,
