@@ -15,11 +15,10 @@ class PatientRecordResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-
-            'patient_info' => new DiagnosisResource($this->whenLoaded('Patinets')),
-            'Doctors_info' => new DoctorResource($this->whenLoaded('Doctors')),
-            'Diagnosises_info' => new DiagnosisResource($this->whenLoaded('Diagnosises')),
-            'Prescriptions_info' => new PrescriptionResource($this->whenLoaded('Prescriptions'))
+            'patient_info' => new PatientResource($this->whenLoaded('Patinets')),
+            'doctor_info' => new DoctorResource($this->whenLoaded('Doctors')),
+            'diagnosis_info' => new DiagnosisResource($this->whenLoaded('diagnosis')),
+            'prescription_info' => new PrescriptionResource($this->whenLoaded('prescription')),
         ];
     }
 }

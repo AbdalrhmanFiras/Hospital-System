@@ -13,11 +13,6 @@ use App\Models\prescription;
 class PatientRecord extends Model
 {
     protected $fillable = [
-
-        'doctor_name',
-        'patient_name',
-        'medication_name',
-        'diseases_name',
         'doctor_id',
         'patient_id',
         'diagnosis_id',
@@ -33,13 +28,26 @@ class PatientRecord extends Model
         return $this->belongsTo(Patient::class);
     }
 
-    public function Diagnosises(): HasMany
+    // public function Diagnosises(): HasMany
+    // {
+    //     return $this->hasMany(Diagnosis::class);
+    // }
+
+    // public function Prescriptions(): HasMany
+    // {
+    //     return $this->hasMany(Prescription::class);
+    // }
+
+
+    public function diagnosis()
     {
-        return $this->hasMany(Diagnosis::class);
+        return $this->belongsTo(Diagnosis::class);
     }
 
-    public function Prescriptions(): HasMany
+    public function prescription()
     {
-        return $this->hasMany(Prescription::class);
+        return $this->belongsTo(Prescription::class);
     }
+
+
 }

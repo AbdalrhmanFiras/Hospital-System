@@ -113,7 +113,7 @@ class DoctorController extends Controller
 
         return response()->json([
             'message' => 'Patient Record Created Successfully',
-            'record' => new PatientRecordResource($record->load('Doctors', 'Patinets', 'Diagnosises', 'Prescriptions')),
+            'record' => new PatientRecordResource($record->load('Doctors', 'Patinets', 'diagnosis', 'prescription')),
         ], 201);
 
 
