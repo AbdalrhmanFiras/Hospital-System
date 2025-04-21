@@ -29,6 +29,7 @@ Route::get('doctor/Find/{doctor_name}', [DoctorController::class, 'FindDoctorbyn
 
 //////////////////////////////////////////////Reception
 Route::post('reception/patient', [ReceptionController::class, 'AddPatient']);
+Route::post('reception/patient/record', [ReceptionController::class, 'CreatePatientRecord']);
 
 //////////////////////////////////////////////Management
 Route::post('management/doctor', [ManagementController::class, 'DoctorSignin']);

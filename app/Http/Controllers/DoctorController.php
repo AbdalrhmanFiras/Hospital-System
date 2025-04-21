@@ -14,13 +14,24 @@ class DoctorController extends Controller
 
     public function getDoctorIdByName($doctor_name)
     {
-        return Doctor::where('name', $doctor_name)->value('id');
+        $doctor = Doctor::where('name', $doctor_name)->value('id');
+        if (!$doctor) {
+            return response()->json(['message' => 'patient not found'], 404);
+        }
+
+        return $doctor;
     }
 
 
     public function getPatientIdByName($patient_name)
     {
-        return Patient::where('name', $patient_name)->value('id');
+        $patient = Patient::where('name', $patient_name)->value('id');
+
+        if (!$patient) {
+            return response()->json(['message' => 'patient not found'], 404);
+        }
+
+        return $patient;
     }
 
     public function getdiagnosisByName($diseases_name)
@@ -49,7 +60,7 @@ class DoctorController extends Controller
     public function getprescriptionByName($medication_name)
     {
 
-        $Prescription = prescription::where('name', $medication_name)->first(['id', 'doctor_id', 'patient_id']);
+        $Prescription = prescription::where('medication_name', $medication_name)->first(['id', 'doctor_id', 'patient_id']);
 
         $prescription_doctor_id = $Prescription->doctor_id;
         $prescription_patient_id = $Prescription->patient_id;
@@ -121,10 +132,10 @@ class DoctorController extends Controller
         }
 
         return response()->json(['records' => $records], 200);
-    }//ok
+    }
 
     public function getPatientRecord($patient_id)
-    {
+    {//doctor 
         $patient = Patient::find($patient_id);
 
         if (!$patient) {
@@ -156,7 +167,7 @@ class DoctorController extends Controller
     // }
 
     public function Diagnosis(Request $request)
-    {
+    {//doctor
         $request->validate([
             'diseases_name' => 'required|string',
             'diseases' => 'required|string|in:infectious diseases, deficiency diseases, hereditary diseases, physiological diseases',
@@ -187,7 +198,7 @@ class DoctorController extends Controller
 
 
     public function Prescription(Request $request)
-    {
+    {//doctor
         $request->validate([
             'medication_name' => 'required|string',
             'diagnosis_id' => 'required|string|exists:diagnoses,id',
