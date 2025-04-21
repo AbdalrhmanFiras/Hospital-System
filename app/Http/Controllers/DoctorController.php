@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DiagnosisRequest;
 use App\Models\Diagnosis;
 use App\Models\Doctor;
 use App\Models\Patient;
@@ -151,16 +152,9 @@ class DoctorController extends Controller
     //     return response()->json(['doctor_id' => $doctor_id]);
     // }
 
-    public function Diagnosis(Request $request)
+    public function Diagnosis(DiagnosisRequest $request)
     {//doctor
-        $request->validate([
-            'diseases_name' => 'required|string',
-            'diseases' => 'required|string|in:infectious diseases, deficiency diseases, hereditary diseases, physiological diseases',
-            'diagnoses' => 'required|string|in:clinical,medical',
-            'allergies' => 'nullable|text',
-            'doctor_name' => 'required|string',
-            'patient_name' => 'required|string',
-        ]);
+
 
         $doctor_id = $this->getDoctorIdByName($request->doctor_name);
         $patient_id = $this->getPatientIdByName($request->patient_name);
