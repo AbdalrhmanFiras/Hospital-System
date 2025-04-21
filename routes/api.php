@@ -23,6 +23,7 @@ Route::get('doctor/{id}/all-record', [DoctorController::class, 'getAllPatientRec
 Route::get('doctor/{id}/record', [DoctorController::class, 'getPatientRecord']);
 Route::post('doctor/diagnosis', [DoctorController::class, 'Diagnosis']);
 Route::post('doctor/prescription', [DoctorController::class, 'Prescription']);
+Route::post('doctor/patient/record', [DoctorController::class, 'CreatePatientRecord']);
 
 Route::get('doctor/Find/{doctor_name}', [DoctorController::class, 'FindDoctorbyname']);
 

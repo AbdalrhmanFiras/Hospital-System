@@ -103,7 +103,6 @@ class DoctorController extends Controller
         }
 
 
-
     }
 
 
