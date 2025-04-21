@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\DiagnosisRequest;
+use App\Http\Requests\PrescriptionRequest;
 use App\Models\Diagnosis;
 use App\Models\Doctor;
 use App\Models\Patient;
@@ -176,17 +177,8 @@ class DoctorController extends Controller
     }
 
 
-    public function Prescription(Request $request)
+    public function Prescription(PrescriptionRequest $request)
     {//doctor
-        $request->validate([
-            'medication_name' => 'required|string',
-            'dosage_amount' => 'nullable|string',
-            'frequency' => 'nullable|string',
-            'duration' => 'required|string',
-            'doctor_name' => 'required|string',
-            'patient_name' => 'required|string',
-            'diagnosis_name' => 'required|string',
-        ]);
 
         $doctor_id = $this->getDoctorIdByName($request->doctor_name);
         $patient_id = $this->getPatientIdByName($request->patient_name);
