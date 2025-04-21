@@ -6,6 +6,9 @@ use App\Http\Requests\DiagnosisRequest;
 use App\Http\Requests\PrescriptionRequest;
 use App\Http\Requests\PatientRecordRequest;
 use App\Http\Resources\DiagnosisResource;
+use App\Http\Resources\PatientResource;
+use App\Http\Resources\DoctorResource;
+
 use App\Http\Resources\PatientRecordResource;
 use App\Http\Resources\PrescriptionResource;
 use App\Models\Diagnosis;
@@ -65,7 +68,6 @@ class DoctorController extends Controller
     public function CreatePatientRecord(PatientRecordRequest $request)
     {
 
-
         $doctor_id = $this->getDoctorIdByName($request->doctor_name);
         $patient_id = $this->getPatientIdByName($request->patient_name);
         $diagnosis_model = $this->getdiagnosisByName($request->diseases_name);
@@ -93,7 +95,6 @@ class DoctorController extends Controller
         }
 
 
-
         if (// another check
             $doctor_id !== $diagnosis_model['d_doctor_id'] && $patient_id !== $diagnosis_model['d_patient_id'] &&
             $doctor_id !== $prescription_model['p_doctor_id'] && $patient_id !== $prescription_model['p_patient_id']
@@ -110,10 +111,13 @@ class DoctorController extends Controller
         ]);
 
 
+        $record = PatientRecord::with(['doctors', 'Patinets', 'diagnosis', 'prescription'])
+            ->findOrFail($record->id);
+
 
         return response()->json([
             'message' => 'Patient Record Created Successfully',
-            'record' => new PatientRecordResource($record->load('Doctors', 'Patinets', 'diagnosis', 'prescription')),
+            'record' => new PatientRecordResource($record),
         ], 201);
 
 

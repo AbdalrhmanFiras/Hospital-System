@@ -17,16 +17,17 @@ class PatientRecord extends Model
         'patient_id',
         'diagnosis_id',
         'prescription_id',
+
     ];
-    public function Doctors(): BelongsTo
+    public function doctors(): BelongsTo
     {
-        return $this->belongsTo(Doctor::class);
+        return $this->belongsTo(Doctor::class, 'doctor_id');
     }
 
     public function Patinets(): BelongsTo
     {
-        return $this->belongsTo(Patient::class);
-    }
+        return $this->belongsTo(Patient::class, 'patient_id');
+    }// work
 
     // public function Diagnosises(): HasMany
     // {
