@@ -6,6 +6,7 @@ use App\Http\Requests\DiagnosisRequest;
 use App\Http\Requests\PrescriptionRequest;
 use App\Http\Requests\PatientRecordRequest;
 use App\Http\Resources\DiagnosisResource;
+use App\Http\Resources\PrescriptionResoure;
 use App\Models\Diagnosis;
 use App\Models\Doctor;
 use App\Models\Patient;
@@ -174,7 +175,6 @@ class DoctorController extends Controller
 
 
 
-
     public function Prescription(PrescriptionRequest $request)
     {//doctor
 
@@ -204,7 +204,7 @@ class DoctorController extends Controller
 
         return response()->json([
             'message' => 'Prescription Added Successfully',
-            'prescription' => $prescription
+            'prescription' => new PrescriptionResoure($prescription)
         ], 200);
     }
 

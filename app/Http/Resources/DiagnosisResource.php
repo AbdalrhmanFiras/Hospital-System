@@ -15,6 +15,7 @@ class DiagnosisResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'diseases_name' => $this->diseases_name,
             'diseases' => $this->diseases,
             'diagnoses' => $this->diagnoses,
