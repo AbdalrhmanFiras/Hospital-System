@@ -48,7 +48,7 @@ class DoctorController extends Controller
     {
 
 
-        $prescription = Prescription::where('medication_name', $medication_name)->first(['id', 'doctor_id', 'patient_id']);
+        $prescription = prescription::where('medication_name', $medication_name)->first(['id', 'doctor_id', 'patient_id']);
         if (!$prescription) {
             return null;
         }
@@ -180,8 +180,8 @@ class DoctorController extends Controller
 
         $doctor_id = $this->getDoctorIdByName($request->doctor_name);
         $patient_id = $this->getPatientIdByName($request->patient_name);
-        $daignosis_model = $this->getdiagnosisByName($request->diagnosis_name);
-        if (!is_array($daignosis_model)) {
+        $diagnosis_model = $this->getdiagnosisByName($request->diagnosis_name);
+        if (!is_array($diagnosis_model)) {
             return response()->json(['message' => 'Diagnosis not found'], 404);
         }
         if (!$doctor_id) {
@@ -197,14 +197,24 @@ class DoctorController extends Controller
             'dosage_amount' => $request->dosage_amount,
             'frequency' => $request->frequency,
             'duration' => $request->duration,
-            'diagnosis_id' => $daignosis_model['id'],
+            'diagnosis_id' => $diagnosis_model['id'],
             'doctor_id' => $doctor_id,
             'patient_id' => $patient_id,
         ]);
 
+        // $full_diagnosis = Diagnosis::find($diagnosis_model['id']);
+
+        // if (!$full_diagnosis) {
+        //     return response()->json(['message' => 'Diagnosis details not found'], 404);
+        // }
+
+        // $prescription->load('diagnosis');
+
+
+
         return response()->json([
             'message' => 'Prescription Added Successfully',
-            'prescription' => new PrescriptionResoure($prescription)
+            'prescription' => new PrescriptionResoure($prescription->load('diagnosis')),
         ], 200);
     }
 

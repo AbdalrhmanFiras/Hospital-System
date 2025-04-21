@@ -17,8 +17,9 @@ class PrescriptionResoure extends JsonResource
         return [
             'id' => $this->id,
             'patient_id' => $this->patient_id,
-            //'diagnosis_id' => $this->daignosis_model,
             'doctor_id' => $this->doctor_id,
+            'diagnosis_id' => $this->diagnosis_id,
+            'diagnosis' => new DiagnosisResource($this->whenLoaded('diagnosis')),
             'medication_name' => $this->medication_name,
             'dosage_amount' => $this->when(!is_null($this->dosage_amount), $this->dosage_amount),
             'frequency' => $this->when(!is_null($this->frequency), $this->frequency),
