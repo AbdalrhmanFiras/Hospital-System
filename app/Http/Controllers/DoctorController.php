@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Diagnosis;
 use App\Models\Doctor;
 use App\Models\Patient;
+use App\Models\PatientRecord;
 use App\Models\prescription;
 use Illuminate\Http\Request;
 
@@ -75,10 +76,29 @@ class DoctorController extends Controller
         $diagnosis_model = $this->getdiagnosisByName($request->diseases_name);
         $prescription_model = $this->getprescriptionByName($request->medication_name);
 
+        if (!$doctor_id || !$patient_id || !$diagnosis_model || !$prescription_model) {
+            return response()->json(['message' => 'Doctor, Patient, Diagnosis, or Prescription not found'], 404);
+        }
+
+
         if (
-            $doctor_id == $diagnosis_model->doctor_id && $patient_id == $diagnosis_model->patient_id &&
-            $doctor_id == $prescription_model->doctor_id && $patient_id == $prescription_model->patient_id
+            $doctor_id == $diagnosis_model['d_doctor_id'] && $patient_id == $diagnosis_model['d_patient_id'] &&
+            $doctor_id == $prescription_model['p_doctor_id'] && $patient_id == $prescription_model['p_patient_id']
         ) {
+            $record = PatientRecord::create([
+                'doctor_id' => $doctor_id,
+                'patient_id' => $patient_id,
+                'diagnosis_id' => Diagnosis::where('diseases_name', $request->diseases_name)->value('id'),
+                'prescription_id' => prescription::where('medication_name', $request->medication_name)->value('id')
+            ]);
+
+
+
+            return response()->json([
+                'message' => 'Patient Record Created Successfully',
+                'record' => $record
+            ], 201);
+
 
         }
 
