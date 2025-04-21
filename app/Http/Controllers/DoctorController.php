@@ -6,6 +6,7 @@ use App\Http\Requests\DiagnosisRequest;
 use App\Http\Requests\PrescriptionRequest;
 use App\Http\Requests\PatientRecordRequest;
 use App\Http\Resources\DiagnosisResource;
+use App\Http\Resources\PatientRecordResoure;
 use App\Http\Resources\PrescriptionResoure;
 use App\Models\Diagnosis;
 use App\Models\Doctor;
@@ -108,9 +109,11 @@ class DoctorController extends Controller
             'prescription_id' => $prescription_model['id']
         ]);
 
+
+
         return response()->json([
             'message' => 'Patient Record Created Successfully',
-            'record' => $record
+            'record' => new PatientRecordResoure($record->load('Doctors', 'Patinets', 'Diagnosises', 'Prescriptions')),
         ], 201);
 
 

@@ -18,7 +18,7 @@ class Doctor extends Model
         'Available',
         'phone',
         'email',
-        'patientrecor'
+
     ];
     public function Patients(): HasMany
     {
