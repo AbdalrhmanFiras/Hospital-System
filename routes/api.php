@@ -24,8 +24,6 @@ Route::post('doctor/diagnosis', [DoctorController::class, 'Diagnosis']);
 Route::post('doctor/prescription', [DoctorController::class, 'Prescription']);
 Route::post('doctor/patient/record', [DoctorController::class, 'CreatePatientRecord']);
 
-Route::get('doctor/Find/{doctor_name}', [DoctorController::class, 'FindDoctorbyname']);
-
 //////////////////////////////////////////////Reception
 Route::post('reception/patient', [ReceptionController::class, 'AddPatient']);
 Route::post('reception/patient/record', [ReceptionController::class, 'CreatePatientRecord']);

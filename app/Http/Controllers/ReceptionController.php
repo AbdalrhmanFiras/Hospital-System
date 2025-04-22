@@ -152,17 +152,14 @@ class ReceptionController extends Controller
 
 
     public function getAllPatientRecord($doctor_name)
-    {// it should be i another controller 
-        $doctor_id = Doctor::where('Name', $doctor_name)->first('id');
-
-
+    {
+        $doctor_id = Doctor::where('name', $doctor_name)->first();
 
         if (!$doctor_id) {
             return response()->json(['message' => 'Doctor not found'], 404);
         }
 
         $records = $doctor_id->PatientRecords;
-
         if ($records->isEmpty()) {
             return response()->json(['message' => 'Doctor has no patient records'], 404);
         }

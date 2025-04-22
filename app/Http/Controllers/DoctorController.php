@@ -126,14 +126,12 @@ class DoctorController extends Controller
 
     public function getPatientRecord($patient_name)
     {//doctor 
-        $patient = Patient::find($patient_name);
-
+        $patient = Patient::where('name', $patient_name)->first();
         if (!$patient) {
             return response()->json(['message' => 'patient not found'], 404);
         }
 
         $records = $patient->PatientRecords;
-
         if ($records->isEmpty()) {
             return response()->json(['message' => 'patient has no patient records'], 404);
         }
