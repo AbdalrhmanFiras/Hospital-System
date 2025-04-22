@@ -65,38 +65,34 @@ class DoctorController extends Controller
 
     public function CreatePatientRecord(PatientRecordRequest $request)
     {
+
+        $diagnosis = $this->getdiagnosisByName($request->diseases_name);
+        if (!$diagnosis) {
+            return response()->json(['message' => 'Diagnosis not found or invalid'], 400);
+        }
+        $prescription = $this->getprescriptionByName($request->medication_name);
+        if (!$prescription) {
+            return response()->json(['message' => 'Prescription not found or invalid'], 400);
+        }
         $data = [
             'doctor_id' => $this->getDoctorIdByName($request->doctor_name),
             'patient_id' => $this->getPatientIdByName($request->patient_name),
-            'diagnosis_id' => $this->getdiagnosisByName($request->diseases_name)['id'],
-            'prescription_id' => $this->getprescriptionByName($request->medication_name)['id']
+            'diagnosis_id' => $diagnosis['id'],
+            'prescription_id' => $prescription['id']
         ];
 
-
-        if (!$data['doctor_id']) {
-            return response()->json(['message' => 'Doctor not found or invalid'], 400);
+        $missingFields = [];
+        foreach ($data as $key => $value) {
+            if (!$value) {
+                $missingFields[] = ucfirst(str_replace('_', ' ', $key)) . ' not found or invalid';
+            }
         }
-        if (!$data['patient_id']) {
-            return response()->json(['message' => 'Patient not found or invalid'], 400);
+        if (!empty($missingFields)) {
+            return response()->json([
+                'message' => 'Validation failed for the following fields:',
+                'errors' => $missingFields
+            ], 400);
         }
-        if (!$data['diagnosis_id']) {
-            return response()->json(['message' => 'Diagnosis not found or invalid'], 400);
-        }
-        if (!$data['prescription_id']) {
-            return response()->json(['message' => 'Prescription not found or invalid'], 400);
-        }
-
-        // $missingFields = [];
-        // foreach ($data as $key => $value) {
-        //     if (!$value)
-        //         $missingFields = ucfirst(str_replace('_', '', $key));
-        // }// replace the _ with space and make the first letter of first word cap
-        // if (!empty($missingFields)) {
-        //     return response()->json([
-        //         'message' => 'Validation failed for the following fields:',
-        //         'errors' => $missingFields
-        //     ], 400);
-        // }
         $record = PatientRecord::create($data);
 
 
