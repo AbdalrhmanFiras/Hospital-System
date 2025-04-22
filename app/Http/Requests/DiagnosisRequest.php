@@ -25,7 +25,7 @@ class DiagnosisRequest extends FormRequest
             'diseases_name' => 'required|string',
             'diseases' => 'required|string|in:infectious diseases, deficiency diseases, hereditary diseases, physiological diseases',
             'diagnoses' => 'required|string|in:clinical,medical',
-            'allergies' => 'nullable|text',
+            'allergies' => 'nullable|string',
             'doctor_name' => 'required|string',
             'patient_name' => 'required|string',
         ];

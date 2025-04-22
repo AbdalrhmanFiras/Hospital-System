@@ -30,10 +30,8 @@ class DoctorController extends Controller
         return Patient::where('name', $patient_name)->value('id');
     }
 
-
-    public function getdiagnosisByName($diseases_name)
+    public function getDiagnosisByName($diseases_name)
     {
-
         $diagnosis = Diagnosis::where('diseases_name', $diseases_name)->first(['id', 'doctor_id', 'patient_id']);
         if (!$diagnosis) {
             return null;
@@ -43,13 +41,9 @@ class DoctorController extends Controller
             'd_doctor_id' => $diagnosis->doctor_id,
             'd_patient_id' => $diagnosis->patient_id
         ];
-
     }
-
-    public function getprescriptionByName($medication_name)
+    public function getPrescriptionByName($medication_name)
     {
-
-
         $prescription = prescription::where('medication_name', $medication_name)->first(['id', 'doctor_id', 'patient_id']);
         if (!$prescription) {
             return null;
@@ -62,48 +56,47 @@ class DoctorController extends Controller
         ];
     }
 
-
     public function CreatePatientRecord(PatientRecordRequest $request)
     {
-
-        $diagnosis = $this->getdiagnosisByName($request->diseases_name);
-        if (!$diagnosis) {
-            return response()->json(['message' => 'Diagnosis not found or invalid'], 400);
-        }
-        $prescription = $this->getprescriptionByName($request->medication_name);
-        if (!$prescription) {
-            return response()->json(['message' => 'Prescription not found or invalid'], 400);
-        }
-        $data = [
-            'doctor_id' => $this->getDoctorIdByName($request->doctor_name),
-            'patient_id' => $this->getPatientIdByName($request->patient_name),
-            'diagnosis_id' => $diagnosis['id'],
-            'prescription_id' => $prescription['id']
-        ];
-
-        $missingFields = [];
-        foreach ($data as $key => $value) {
-            if (!$value) {
-                $missingFields[] = ucfirst(str_replace('_', ' ', $key)) . ' not found or invalid';
+        try {
+            $diagnosis = $this->getDiagnosisByName($request->diseases_name);
+            if (!$diagnosis) {
+                return response()->json(['message' => 'Diagnosis not found or invalid'], 400);
             }
-        }
-        if (!empty($missingFields)) {
+            $prescription = $this->getPrescriptionByName($request->medication_name);
+            if (!$prescription) {
+                return response()->json(['message' => 'Prescription not found or invalid'], 400);
+            }
+            $data = [
+                'doctor_id' => $this->getDoctorIdByName($request->doctor_name),
+                'patient_id' => $this->getPatientIdByName($request->patient_name),
+                'diagnosis_id' => $diagnosis['id'],
+                'prescription_id' => $prescription['id']
+            ];
+
+            $missingFields = [];
+            foreach ($data as $key => $value) {
+                if (!$value) {
+                    $missingFields[] = ucfirst(str_replace('_', ' ', $key)) . ' not found or invalid';
+                }
+            }
+            if (!empty($missingFields)) {
+                return response()->json([
+                    'message' => 'Validation failed for the following fields:',
+                    'errors' => $missingFields
+                ], 400);
+            }
+            $record = PatientRecord::create($data);
+            $record = PatientRecord::with(['doctors', 'Patinets', 'diagnosis', 'prescription'])
+                ->findOrFail($record->id);
             return response()->json([
-                'message' => 'Validation failed for the following fields:',
-                'errors' => $missingFields
-            ], 400);
+                'message' => 'Patient Record Created Successfully',
+                'record' => new PatientRecordResource($record),
+            ], 201);
+        } catch (\Exception $e) {
+
+
         }
-        $record = PatientRecord::create($data);
-
-
-        $record = PatientRecord::with(['doctors', 'Patinets', 'diagnosis', 'prescription'])
-            ->findOrFail($record->id);
-        return response()->json([
-            'message' => 'Patient Record Created Successfully',
-            'record' => new PatientRecordResource($record),
-        ], 201);
-
-
     }
 
 
@@ -114,34 +107,25 @@ class DoctorController extends Controller
         if (!$patient) {
             return response()->json(['message' => 'patient not found'], 404);
         }
-
         $records = $patient->PatientRecords;
         if ($records->isEmpty()) {
             return response()->json(['message' => 'patient has no patient records'], 404);
         }
-
         return response()->json(['records' => $records], 200);
     }
 
     public function Diagnosis(DiagnosisRequest $request)
-    {//doctor
-
-
-        $doctor_id = $this->getDoctorIdByName($request->doctor_name);
-        $patient_id = $this->getPatientIdByName($request->patient_name);
-
-        if (!$doctor_id || !$patient_id) {
-            return response()->json(['message' => 'Doctor or Patient not found'], 404);
-        }
-
-        $diagnosis = Diagnosis::create([
-            'diseases_name' => $request->diseases_name,
-            'diseases' => $request->diseases,
-            'diagnoses' => $request->diagnoses,
-            'allergies' => $request->allergies,
-            'doctor_id' => $doctor_id,
-            'patient_id' => $patient_id,
-        ]);
+    {
+        $data = $request->validated();
+        $diagnosisdata = [
+            'diseases_name' => $data['diseases_name'],
+            'diseases' => $data['diseases'],
+            'diagnoses' => $data['diagnoses'],
+            'allergies' => $allergies = $data['allergies'] ?? null,
+            'doctor_id' => $this->getDoctorIdByName($data['doctor_name']),
+            'patient_id' => $this->getPatientIdByName($data['patient_name']),
+        ];
+        $diagnosis = Diagnosis::create($diagnosisdata);
 
         return response()->json(['message' => 'Diagnosis Added Successfully', 'diagnosis' => new DiagnosisResource($diagnosis)], 200);
     }
@@ -153,7 +137,7 @@ class DoctorController extends Controller
 
         $doctor_id = $this->getDoctorIdByName($request->doctor_name);
         $patient_id = $this->getPatientIdByName($request->patient_name);
-        $diagnosis_model = $this->getdiagnosisByName($request->diagnosis_name);
+        $diagnosis_model = $this->getDiagnosisByName($request->diagnosis_name);
         if (!is_array($diagnosis_model)) {
             return response()->json(['message' => 'Diagnosis not found'], 404);
         }
