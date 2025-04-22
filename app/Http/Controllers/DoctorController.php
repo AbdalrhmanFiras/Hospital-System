@@ -38,7 +38,6 @@ class DoctorController extends Controller
         if (!$diagnosis) {
             return null;
         }
-
         return [
             'id' => $diagnosis->id,
             'd_doctor_id' => $diagnosis->doctor_id,
@@ -66,54 +65,43 @@ class DoctorController extends Controller
 
     public function CreatePatientRecord(PatientRecordRequest $request)
     {
+        $data = [
+            'doctor_id' => $this->getDoctorIdByName($request->doctor_name),
+            'patient_id' => $this->getPatientIdByName($request->patient_name),
+            'diagnosis_id' => $this->getdiagnosisByName($request->diseases_name)['id'],
+            'prescription_id' => $this->getprescriptionByName($request->medication_name)['id']
+        ];
 
-        $doctor_id = $this->getDoctorIdByName($request->doctor_name);
-        $patient_id = $this->getPatientIdByName($request->patient_name);
-        $diagnosis_model = $this->getdiagnosisByName($request->diseases_name);
-        $prescription_model = $this->getprescriptionByName($request->medication_name);
 
-        // if (!$doctor_id || !$patient_id || !$diagnosis_model || !$prescription_model) {
-        //     return response()->json(['message' => 'Doctor, Patient, Diagnosis, or Prescription not found'], 404);
+        if (!$data['doctor_id']) {
+            return response()->json(['message' => 'Doctor not found or invalid'], 400);
+        }
+        if (!$data['patient_id']) {
+            return response()->json(['message' => 'Patient not found or invalid'], 400);
+        }
+        if (!$data['diagnosis_id']) {
+            return response()->json(['message' => 'Diagnosis not found or invalid'], 400);
+        }
+        if (!$data['prescription_id']) {
+            return response()->json(['message' => 'Prescription not found or invalid'], 400);
+        }
+
+        // $missingFields = [];
+        // foreach ($data as $key => $value) {
+        //     if (!$value)
+        //         $missingFields = ucfirst(str_replace('_', '', $key));
+        // }// replace the _ with space and make the first letter of first word cap
+        // if (!empty($missingFields)) {
+        //     return response()->json([
+        //         'message' => 'Validation failed for the following fields:',
+        //         'errors' => $missingFields
+        //     ], 400);
         // }
-
-        //more dynamic 
-        if (!$doctor_id) {
-            return response()->json(['message' => 'Doctor not found'], 404);
-        }
-
-        if (!$patient_id) {
-            return response()->json(['message' => 'Patient not found'], 404);
-        }
-
-        if (!$diagnosis_model) {
-            return response()->json(['message' => 'Diagnosis not found'], 404);
-        }
-
-        if (!$prescription_model) {
-            return response()->json(['message' => 'Prescription not found'], 404);
-        }
-
-
-        if (// another check
-            $doctor_id !== $diagnosis_model['d_doctor_id'] && $patient_id !== $diagnosis_model['d_patient_id'] &&
-            $doctor_id !== $prescription_model['p_doctor_id'] && $patient_id !== $prescription_model['p_patient_id']
-        ) {
-            return response()->json([
-                'message' => 'Doctor or Patient mismatch with Diagnosis or Prescription record'
-            ], 400);
-        }
-        $record = PatientRecord::create([
-            'doctor_id' => $doctor_id,
-            'patient_id' => $patient_id,
-            'diagnosis_id' => $diagnosis_model['id'],
-            'prescription_id' => $prescription_model['id']
-        ]);
+        $record = PatientRecord::create($data);
 
 
         $record = PatientRecord::with(['doctors', 'Patinets', 'diagnosis', 'prescription'])
             ->findOrFail($record->id);
-
-
         return response()->json([
             'message' => 'Patient Record Created Successfully',
             'record' => new PatientRecordResource($record),
@@ -138,21 +126,6 @@ class DoctorController extends Controller
 
         return response()->json(['records' => $records], 200);
     }
-
-
-    // public function FindDoctorbyname($doctor_name)
-    // {
-
-    //     $doctor_id = Doctor::when($doctor_name, function ($query, $doctor_name) {
-    //         return $query->where('name', $doctor_name);
-    //     })->value('id');
-
-    //     if (!$doctor_id) {
-    //         return response()->json(['message' => 'there is no doctor like this name']);
-    //     }
-
-    //     return response()->json(['doctor_id' => $doctor_id]);
-    // }
 
     public function Diagnosis(DiagnosisRequest $request)
     {//doctor
