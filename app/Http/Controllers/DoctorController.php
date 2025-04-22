@@ -149,54 +149,37 @@ class DoctorController extends Controller
 
         $data = $request->validated();
 
+        $diagnosis_id = $this->getDiagnosisByName($data['diagnosis_name']);
+        if (!$diagnosis_id) {
+            return response()->json(['message' => 'Diagnosis not found or invalid'], 400);
+        }
+
         $prescriptiondata = [
 
             'medication_name' => $data['medication_name'],
-            'dosage_amount' => $data['dosage_amount'],
+            'dosage_amount' => $data['dosage_amount'] ?? null,
             'frequency' => $data['frequency'] ?? null,
             'duration' => $data['duration'],
-            'diagnosis_id' => $this->getDiagnosisByName($data['diagnosis_name'])['id'],
+            'diagnosis_id' => $diagnosis_id['id'],
             'doctor_id' => $this->getDoctorIdByName($data['doctor_name']),
             'patient_id' => $this->getPatientIdByName($data['patient_name']),
-
-
-
         ];
 
-        // $doctor_id = $this->getDoctorIdByName($request->doctor_name);
-        // $patient_id = $this->getPatientIdByName($request->patient_name);
-        // //  $diagnosis_model = $this->getDiagnosisByName($request->diagnosis_name);
-        // if (!is_array($diagnosis_model)) {
-        //     return response()->json(['message' => 'Diagnosis not found'], 404);
-        // }
-        // if (!$doctor_id) {
-        //     return response()->json(['message' => 'Doctor not found'], 404);
-        // }
+        $missingdata = [];
 
-        // if (!$patient_id) {
-        //     return response()->json(['message' => 'Patient not found'], 404);
-        // }
+        foreach ($missingdata as $key => $value) {
+            if (!$value && $key !== 'frequency' && $key !== 'dosage_amount') {
+                $missingdata = ucfirst(str_replace('_', ' ', $key));
+            }
+        }
 
-        $prescription = Prescription::create(
-            $prescriptiondata
-            // 'medication_name' => $request->medication_name,
-            // 'dosage_amount' => $request->dosage_amount,
-            // 'frequency' => $request->frequency,
-            // 'duration' => $request->duration,
-            // 'diagnosis_id' => $diagnosis_model['id'],
-            // 'doctor_id' => $doctor_id,
-            // 'patient_id' => $patient_id,
-        );
-
-        // $full_diagnosis = Diagnosis::find($diagnosis_model['id']);
-
-        // if (!$full_diagnosis) {
-        //     return response()->json(['message' => 'Diagnosis details not found'], 404);
-        // }
-
-        // $prescription->load('diagnosis');
-
-
+        if (!empty($missingdata)) {
+            return response()->json([
+                'message' => 'Validation failed for the following fields:',
+                'errors' => $missingdata . 'not found'
+            ]);
+        }
+        $prescription = Prescription::create($prescriptiondata);
 
         return response()->json([
             'message' => 'Prescription Added Successfully',
