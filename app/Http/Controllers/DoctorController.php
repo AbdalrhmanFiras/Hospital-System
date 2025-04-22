@@ -8,7 +8,6 @@ use App\Http\Requests\PatientRecordRequest;
 use App\Http\Resources\DiagnosisResource;
 use App\Http\Resources\PatientResource;
 use App\Http\Resources\DoctorResource;
-
 use App\Http\Resources\PatientRecordResource;
 use App\Http\Resources\PrescriptionResource;
 use App\Models\Diagnosis;
