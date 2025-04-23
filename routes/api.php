@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\ReceptionController;
 use App\Http\Controllers\ManagementController;
+use App\Models\Appointment;
 use App\Models\Doctor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +30,11 @@ Route::post('doctor/patient/record', [DoctorController::class, 'CreatePatientRec
 Route::post('reception/patient', [ReceptionController::class, 'AddPatient']);
 Route::post('reception/patient/record', [ReceptionController::class, 'CreatePatientRecord']);
 Route::get('reception/doctor-record/{name}', [ReceptionController::class, 'getAllPatientRecord']);
+Route::get('reception/splz/{Specialization}', [AppointmentController::class, 'getDoctorBySplz']);
+
+
+
+
 
 //////////////////////////////////////////////Management
 Route::post('management/doctor', [ManagementController::class, 'DoctorSignin']);
