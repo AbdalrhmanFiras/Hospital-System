@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Appointment;
 use App\Models\Doctor;
 use Illuminate\Http\Request;
 use PhpParser\Node\Stmt\TryCatch;
@@ -17,5 +18,27 @@ class AppointmentController extends Controller
     }
 
 
-    // public function CreateAppointment($)
+    public function CreateAppointment(Request $request)
+    {
+
+        $request->validate([
+            'doctor_id' => 'required|exists:doctors,id',
+            'patient_id' => 'required|exists:patients,id',
+            'appointment_date' => 'required|date',
+            'appointment_time' => 'required|date_format:H:i'
+        ]);
+
+        //false
+        $isAvailable = !Appointment::where('doctor_id', $request->doctor_id)
+            ->where('appointment_date', $request->appointment_date)
+            ->where('appointment_time', $request->appointment_time)->exists();
+        //true
+        if (!$isAvailable) {
+            return response()->json(['message' => 'Time slot not available'], 409);
+        }
+
+        $appointment = Appointment::create($request->all());
+
+        return response()->json(['message' => $appointment], 200);
+    }
 }
