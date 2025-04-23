@@ -49,7 +49,7 @@ class ReceptionController extends Controller
             if (!empty($missingrecord)) {
                 return response()->json([
                     'message' => 'Validation failed for the following fields:',
-                    'errors' => $missingrecord . ' not found'
+                    'error' => $missingrecord . ' not found'
                 ], 400);
             }
             $record = PatientRecord::create($data);

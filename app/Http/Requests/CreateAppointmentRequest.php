@@ -22,8 +22,8 @@ class CreateAppointmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'doctor_id' => 'required|exists:doctors,id',
-            'patient_id' => 'required|exists:patients,id',
+            'doctor_name' => 'required|string',
+            'patient_name' => 'required|string',
             'appointment_date' => 'required|date',
             'appointment_time' => 'required|date_format:H:i'
         ];

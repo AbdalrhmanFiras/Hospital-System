@@ -86,7 +86,7 @@ class DoctorController extends Controller
             if (!empty($missingrecord)) {
                 return response()->json([
                     'message' => 'Validation failed for the following fields:',
-                    'errors' => $missingrecord . ' not found'
+                    'error' => $missingrecord . ' not found'
                 ], 400);
             }
             $record = PatientRecord::create($data);
@@ -140,7 +140,7 @@ class DoctorController extends Controller
         if (!empty($missingdata)) {
             return response()->json([
                 'message' => 'Validation failed for the following fields:',
-                'errors' => $missingdata . ' not found'
+                'error' => $missingdata . ' not found'
             ], 400);
         }
 
@@ -180,7 +180,7 @@ class DoctorController extends Controller
         if (!empty($missingdata)) {
             return response()->json([
                 'message' => 'Validation failed for the following fields:',
-                'errors' => $missingdata . 'not found'
+                'error' => $missingdata . 'not found'
             ]);
         }
         $prescription = Prescription::create($prescriptiondata);

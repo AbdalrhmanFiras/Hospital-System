@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Appointment extends Model
 {
-    protected $fillable = ['doctor_id', 'patient_id', 'appointment_date', 'appointment_time'];
+    protected $fillable = ['doctor_id', 'patient_id', 'appointment_date', 'appointment_time', 'doctor_name', 'patient_name'];
 
     public function Doctors(): BelongsTo
     {
