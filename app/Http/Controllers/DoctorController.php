@@ -96,6 +96,7 @@ class DoctorController extends Controller
                 'message' => 'Patient Record Created Successfully',
                 'record' => new PatientRecordResource($record),
             ], 201);
+
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'An error occurred while creating the patient record',

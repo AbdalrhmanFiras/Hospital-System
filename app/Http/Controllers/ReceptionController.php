@@ -177,16 +177,9 @@ class ReceptionController extends Controller
      */
     public function AddPatient(PatientRequest $request)
     {
+        $data = $request->validated();
 
-        $patient = Patient::create([
-            'name' => $request->name,
-            'age' => $request->age,
-            'address' => $request->address,
-            'phone' => $request->phone,
-            'email' => $request->email,
-            'gender' => $request->gender
-        ]);
-
+        $patient = Patient::create($data);
 
         return response()->json([
             'message' => 'patient loggin successfully',
