@@ -177,22 +177,16 @@ class ReceptionController extends Controller
     {
         $data = $request->validated();
 
-        $exsistPatient = Patient::where('name', $data['name'])
-            ->where('phone', $data['phone'])->first();
-        if ($exsistPatient) {
-            return response()->json(
-                [
-                    'message' => 'Patient already exists',
-                    'pateint' => new PatientResource($exsistPatient)
-                ],
-                200
-            );
-        }
+        $patient = Patient::firstOrCreate(
+            ['name' => $data['name'], 'phone' => $data['phone']],
+            $data
+        );
 
-        $patient = Patient::create($data);
 
         return response()->json([
-            'message' => 'patient loggin successfully',
+            'message' => $patient->wasRecentlyCreated
+                ? 'Patient Add successfully'
+                : 'Patient already exists',
             'patient' => new PatientResource($patient)
         ], 200);
 
