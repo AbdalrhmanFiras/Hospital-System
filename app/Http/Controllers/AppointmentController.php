@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateAppointmentRequest;
 use App\Models\Appointment;
 use App\Models\Doctor;
 use Illuminate\Http\Request;
@@ -18,15 +19,10 @@ class AppointmentController extends Controller
     }
 
 
-    public function CreateAppointment(Request $request)
+    public function CreateAppointment(CreateAppointmentRequest $request)
     {
 
-        $request->validate([
-            'doctor_id' => 'required|exists:doctors,id',
-            'patient_id' => 'required|exists:patients,id',
-            'appointment_date' => 'required|date',
-            'appointment_time' => 'required|date_format:H:i'
-        ]);
+
 
         //false
         $isAvailable = !Appointment::where('doctor_id', $request->doctor_id)
