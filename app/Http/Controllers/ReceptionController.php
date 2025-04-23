@@ -1,80 +1,78 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Http\Requests\DiagnosisRequest;
 use App\Http\Requests\PatientRequest;
+use App\Http\Requests\PrescriptionRequest;
+use App\Http\Requests\PatientRecordRequest;
+use App\Http\Resources\DiagnosisResource;
 use App\Http\Resources\PatientResource;
-use App\Models\Patient;
+use App\Http\Resources\DoctorResource;
+use App\Http\Resources\PatientRecordResource;
+use App\Http\Resources\PrescriptionResource;
 use App\Models\Diagnosis;
 use App\Models\Doctor;
+use App\Models\Patient;
 use App\Models\PatientRecord;
 use App\Models\prescription;
 use Illuminate\Http\Request;
-
 class ReceptionController extends Controller
 {
 
-
-    public function CreatePatientRecord(Request $request)
+    public function CreatePatientRecord(PatientRecordRequest $request)
     {
-        $request->validate([
-            'doctor_name' => 'required|string',
-            'patient_name' => 'required|string',
-            'diseases_name' => 'required|string',
-            'medication_name' => 'required|string'
-        ]);
+        try {
 
+            $data = $request->validated();
 
-        $doctor_id = $this->getDoctorIdByName($request->doctor_name);
-        $patient_id = $this->getPatientIdByName($request->patient_name);
-        $diagnosis_model = $this->getdiagnosisByName($request->diseases_name);
-        $prescription_model = $this->getprescriptionByName($request->medication_name);
+            $diagnosis_id = $this->getDiagnosisByName($data['diseases_name']);
+            if (!$diagnosis_id) {
+                return response()->json(['message' => 'Diagnosis not found or invalid'], 400);
+            }
+            $prescription_id = $this->getPrescriptionByName($data['medication_name']);
+            if (!$prescription_id) {
+                return response()->json(['message' => 'Prescription not found or invalid'], 400);
+            }
+            $data = [
+                'doctor_id' => $this->getDoctorIdByName($data['doctor_name']),
+                'patient_id' => $this->getPatientIdByName($data['patient_name']),
+                'diagnosis_id' => $diagnosis_id['id'],
+                'prescription_id' => $prescription_id['id']
+            ];
 
-        // if (!$doctor_id || !$patient_id || !$diagnosis_model || !$prescription_model) {
-        //     return response()->json(['message' => 'Doctor, Patient, Diagnosis, or Prescription not found'], 404);
-        // }
-
-        //more dynamic 
-        if (!$doctor_id) {
-            return response()->json(['message' => 'Doctor not found'], 404);
-        }
-
-        if (!$patient_id) {
-            return response()->json(['message' => 'Patient not found'], 404);
-        }
-
-        if (!$diagnosis_model) {
-            return response()->json(['message' => 'Diagnosis not found'], 404);
-        }
-
-        if (!$prescription_model) {
-            return response()->json(['message' => 'Prescription not found'], 404);
-        }
-
-
-
-        if (// another check
-            $doctor_id !== $diagnosis_model['d_doctor_id'] && $patient_id !== $diagnosis_model['d_patient_id'] &&
-            $doctor_id !== $prescription_model['p_doctor_id'] && $patient_id !== $prescription_model['p_patient_id']
-        ) {
+            $missingrecord = [];
+            foreach ($data as $key => $value) {
+                if (!$value) {
+                    $missingrecord = ucfirst(str_replace('_', ' ', $key)) . ' not found or invalid';
+                }
+            }
+            if (!empty($missingrecord)) {
+                return response()->json([
+                    'message' => 'Validation failed for the following fields:',
+                    'errors' => $missingrecord . ' not found'
+                ], 400);
+            }
+            $record = PatientRecord::create($data);
+            $record = PatientRecord::with(['doctors', 'Patinets', 'diagnosis', 'prescription'])
+                ->findOrFail($record->id);
             return response()->json([
-                'message' => 'Doctor or Patient mismatch with Diagnosis or Prescription record'
-            ], 400);
-        }
-        $record = PatientRecord::create([
-            'doctor_id' => $doctor_id,
-            'patient_id' => $patient_id,
-            'diagnosis_id' => $diagnosis_model['id'],
-            'prescription_id' => $prescription_model['id']
-        ]);
+                'message' => 'Patient Record Created Successfully',
+                'record' => new PatientRecordResource($record),
+            ], 201);
 
-        return response()->json([
-            'message' => 'Patient Record Created Successfully',
-            'record' => $record
-        ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while creating the patient record',
+                'error' => $e->getMessage()
+            ], 500);
 
-
+        }//Done 
     }
+
+
+
+
+
 
     //     if (!$doctor_id || !$patient_id || !$diagnosis_model || !$prescription_model) {
     //         return response()->json(['message' => 'Doctor, Patient, Diagnosis, or Prescription not found'], 404);
@@ -152,20 +150,20 @@ class ReceptionController extends Controller
 
 
     public function getAllPatientRecord($doctor_name)
-    {
+    {        // from the name i get the ID form the ID get the record 
         $doctor_id = Doctor::where('name', $doctor_name)->first();
-
         if (!$doctor_id) {
-            return response()->json(['message' => 'Doctor not found'], 404);
+            return response()->json(['message' => 'Doctor not found '], 404);
         }
-
-        $records = $doctor_id->PatientRecords;
-        if ($records->isEmpty()) {
-            return response()->json(['message' => 'Doctor has no patient records'], 404);
+        $record = $doctor_id->PatientRecords;
+        if ($record->isEmpty()) {
+            return response()->json(['message' => 'Doctor has no records'], 404);
         }
-
-        return response()->json(['records' => $records], 200);
+        return response()->json(['records' => $record], 200);
     }
+
+    //$doctor_id = Doctor::where('name', $doctor_name)->first()->PatientRecords();
+// good way but i cant handle the errors
 
     public function index()
     {
@@ -179,6 +177,18 @@ class ReceptionController extends Controller
     {
         $data = $request->validated();
 
+        $exsistPatient = Patient::where('name', $data['name'])
+            ->where('phone', $data['phone'])->first();
+        if ($exsistPatient) {
+            return response()->json(
+                [
+                    'message' => 'Patient already exists',
+                    'pateint' => new PatientResource($exsistPatient)
+                ],
+                200
+            );
+        }
+
         $patient = Patient::create($data);
 
         return response()->json([
@@ -186,7 +196,7 @@ class ReceptionController extends Controller
             'patient' => new PatientResource($patient)
         ], 200);
 
-    }
+    }//Done
 
     /**
      * Display the specified resource.
