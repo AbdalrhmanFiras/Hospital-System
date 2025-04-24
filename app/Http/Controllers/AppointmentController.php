@@ -8,6 +8,7 @@ use App\Http\Requests\PatientRecordRequest;
 use App\Http\Resources\DiagnosisResource;
 use App\Http\Resources\PatientResource;
 use App\Http\Resources\DoctorResource;
+use App\Http\Resources\DailyAppintmentResource;
 use App\Http\Resources\PatientRecordResource;
 use App\Http\Resources\PrescriptionResource;
 use App\Models\Diagnosis;
@@ -89,10 +90,9 @@ class AppointmentController extends Controller
     public function getDailyAppointment(DailyAppointmentRequest $request)
     {
         $data = $request->validated();
-
         $dailyAppointment = Appointment::where('doctor_id', $this->getDoctorIdByName($data['doctor_name']))
             ->where('appointment_date', $data['appointment_date'])->with('patient')->orderBy('appointment_time')->get();
 
-        return $dailyAppointment;
+        return DailyAppintmentResource::collection($dailyAppointment);
     }
 }
