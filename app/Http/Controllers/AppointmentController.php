@@ -84,4 +84,18 @@ class AppointmentController extends Controller
 
         return response()->json(['message' => $appointment], 200);
     }
+
+    public function getDailyAppointment(Request $request)
+    {
+
+        $request->validate([
+            'doctor_name' => 'required|string',
+            'appointment_date' => 'required|date'
+        ]);
+
+        $dailyAppointment = Appointment::where('doctor_id', $this->getDoctorIdByName($request->doctor_name))
+            ->where('appointment_date', $request->appointment_date)->with('patient')->orderBy('appointment_time')->get();
+
+        return $dailyAppointment;
+    }
 }

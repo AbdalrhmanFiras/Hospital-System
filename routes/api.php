@@ -31,7 +31,8 @@ Route::post('reception/patient', [ReceptionController::class, 'AddPatient']);
 Route::post('reception/patient/record', [ReceptionController::class, 'CreatePatientRecord']);
 Route::get('reception/doctor-record/{name}', [ReceptionController::class, 'getAllPatientRecord']);
 Route::get('reception/splz/{Specialization}', [AppointmentController::class, 'getDoctorBySplz']);
-Route::post('reception/appointment', [AppointmentController::class, 'CreateAppointment']);
+Route::post('reception/appointment/booking', [AppointmentController::class, 'CreateAppointment']);
+Route::get('reception/appointment/daily', [AppointmentController::class, 'getDailyAppointment']);
 
 
 
