@@ -5,6 +5,7 @@ use App\Http\Requests\DailyAppointmentRequest;
 use App\Http\Requests\DiagnosisRequest;
 use App\Http\Requests\PrescriptionRequest;
 use App\Http\Requests\PatientRecordRequest;
+use App\Http\Requests\UpdateAppointmentRequest;
 use App\Http\Resources\DiagnosisResource;
 use App\Http\Resources\PatientResource;
 use App\Http\Resources\DoctorResource;
@@ -86,13 +87,54 @@ class AppointmentController extends Controller
 
         return response()->json(['message' => $appointment], 200);
     }
+    public function UpdateAppointment(UpdateAppointmentRequest $request, $id)
+    {
+        $data = $request->validated();
+        $appointment = Appointment::findOrFail($id);
+
+
+        $doctorId = $this->getDoctorIdByName($data['doctor_name']);// if put this in $data it will crush
+        $patientId = $this->getPatientIdByName($data['patient_name']);//
+
+        $data = [
+            'doctor_id' => $doctorId,
+            'patient_id' => $patientId,
+            'appointment_date' => $data['appointment_date'],
+            'appointment_time' => $data['appointment_time'],
+        ];
+
+        $time = Carbon::createFromFormat('H:i', $data['appointment_time']);
+        $startWindow = $time->copy()->subMinutes(30)->format('H:i');
+        $endWindow = $time->copy()->addMinutes(30)->format('H:i');
+
+        $conflictExists = Appointment::where('doctor_id', $doctorId)
+            ->where('appointment_date', $data['appointment_date'])
+            ->whereBetween('appointment_time', [$startWindow, $endWindow])
+            ->exists();
+
+        if ($conflictExists) {
+            return response()->json(['message' => 'Time slot not available within 30-minute buffer'], 409);
+        }
+
+        // No conflict: update the appointment
+        $appointment->update($data);
+
+        return response()->json($appointment, 200);
+    }
+
 
     public function getDailyAppointment(DailyAppointmentRequest $request)
     {
         $data = $request->validated();
         $dailyAppointment = Appointment::where('doctor_id', $this->getDoctorIdByName($data['doctor_name']))
-            ->where('appointment_date', $data['appointment_date'])->with('patient')->orderBy('appointment_time')->get();
+            ->where('appointment_date', $data['appointment_date'])
+            ->with('patient')->orderBy('appointment_time')->get();
+
+        if ($dailyAppointment->isEmpty()) {
+            return response()->json(['message' => 'there is time to slot'], 404);
+        }
 
         return DailyAppintmentResource::collection($dailyAppointment);
     }
+
 }
