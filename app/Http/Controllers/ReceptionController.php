@@ -19,6 +19,52 @@ use Illuminate\Http\Request;
 class ReceptionController extends Controller
 {
 
+
+
+    public function getDoctorIdByName($doctor_name)
+    {
+        return Doctor::where('name', $doctor_name)->value('id');
+    }
+
+    public function getPatientIdByName($patient_name)
+    {
+        return Patient::where('name', $patient_name)->value('id');
+    }
+
+
+    public function getdiagnosisByName($diseases_name)
+    {
+
+        $diagnosis = Diagnosis::where('diseases_name', $diseases_name)->first(['id', 'doctor_id', 'patient_id']);
+        if (!$diagnosis) {
+            return null;
+        }
+
+        return [
+            'id' => $diagnosis->id,
+            'd_doctor_id' => $diagnosis->doctor_id,
+            'd_patient_id' => $diagnosis->patient_id
+        ];
+
+    }
+
+    public function getprescriptionByName($medication_name)
+    {
+
+
+        $prescription = Prescription::where('medication_name', $medication_name)->first(['id', 'doctor_id', 'patient_id']);
+        if (!$prescription) {
+            return null;
+        }
+
+        return [
+            'id' => $prescription->id,
+            'p_doctor_id' => $prescription->doctor_id,
+            'p_patient_id' => $prescription->patient_id
+        ];
+    }
+
+
     public function CreatePatientRecord(PatientRecordRequest $request)
     {
         try {
@@ -69,81 +115,6 @@ class ReceptionController extends Controller
         }//Done 
     }
 
-
-
-
-
-
-    //     if (!$doctor_id || !$patient_id || !$diagnosis_model || !$prescription_model) {
-    //         return response()->json(['message' => 'Doctor, Patient, Diagnosis, or Prescription not found'], 404);
-    //     }
-
-
-    //     if (
-    //         $doctor_id == $diagnosis_model['d_doctor_id'] && $patient_id == $diagnosis_model['d_patient_id'] &&
-    //         $doctor_id == $prescription_model['p_doctor_id'] && $patient_id == $prescription_model['p_patient_id']
-    //     ) {
-    //         $record = PatientRecord::create([
-    //             'doctor_id' => $doctor_id,
-    //             'patient_id' => $patient_id,
-    //             'diagnosis_id' => Diagnosis::where('diseases_name', $request->diseases_name)->value('id'),
-    //             'prescription_id' => prescription::where('medication_name', $request->medication_name)->value('id')
-    //         ]);
-
-
-
-    //         return response()->json([
-    //             'message' => 'Patient Record Created Successfully',
-    //             'record' => $record
-    //         ], 201);
-
-    //     }
-
-    // }
-
-    public function getDoctorIdByName($doctor_name)
-    {
-        return Doctor::where('name', $doctor_name)->value('id');
-    }
-
-    public function getPatientIdByName($patient_name)
-    {
-        return Patient::where('name', $patient_name)->value('id');
-    }
-
-
-    public function getdiagnosisByName($diseases_name)
-    {
-
-        $diagnosis = Diagnosis::where('diseases_name', $diseases_name)->first(['id', 'doctor_id', 'patient_id']);
-        if (!$diagnosis) {
-            return null;
-        }
-
-        return [
-            'id' => $diagnosis->id,
-            'd_doctor_id' => $diagnosis->doctor_id,
-            'd_patient_id' => $diagnosis->patient_id
-        ];
-
-    }
-
-    public function getprescriptionByName($medication_name)
-    {
-
-
-        $prescription = Prescription::where('medication_name', $medication_name)->first(['id', 'doctor_id', 'patient_id']);
-        if (!$prescription) {
-            return null;
-        }
-
-        return [
-            'id' => $prescription->id,
-            'p_doctor_id' => $prescription->doctor_id,
-            'p_patient_id' => $prescription->patient_id
-        ];
-    }
-
     ////////////////////////////////////////////// From DoctorController //////////////////////////////////
 
 
@@ -165,14 +136,7 @@ class ReceptionController extends Controller
     //$doctor_id = Doctor::where('name', $doctor_name)->first()->PatientRecords();
 // good way but i cant handle the errors
 
-    public function index()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function AddPatient(PatientRequest $request)
     {
         $data = $request->validated();
@@ -182,7 +146,6 @@ class ReceptionController extends Controller
             $data
         );
 
-
         return response()->json([
             'message' => $patient->wasRecentlyCreated
                 ? 'Patient Add successfully'
@@ -191,6 +154,11 @@ class ReceptionController extends Controller
         ], 200);
 
     }//Done
+    public function index()
+    {
+        //
+    }
+
 
     /**
      * Display the specified resource.

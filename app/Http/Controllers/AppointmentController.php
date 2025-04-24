@@ -16,6 +16,7 @@ use App\Models\PatientRecord;
 use App\Models\prescription;
 use App\Http\Requests\CreateAppointmentRequest;
 use App\Models\Appointment;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use PhpParser\Node\Stmt\TryCatch;
 
@@ -45,10 +46,14 @@ class AppointmentController extends Controller
     {
         $data = $request->validated();
 
+
+        $appointmentTime = Carbon::createFromFormat('H:i', $data['appointment_time']);
+        $start = $appointmentTime->copy()->subMinutes(30)->format('H:i');
+        $end = $appointmentTime->copy()->addMinutes(30)->format('H:i');
         //false or true
         $isAvailable = !Appointment::where('doctor_id', $this->getDoctorIdByName($data['doctor_name']))
             ->where('appointment_date', $data['appointment_date'])
-            ->where('appointment_time', $data['appointment_time'])->exists();
+            ->whereBetween('appointment_time', [$start, $end])->exists();
         //true or false
         if (!$isAvailable) {
             return response()->json(['message' => 'Time slot not available'], 409);
