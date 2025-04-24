@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Http\Requests\DailyAppointmentRequest;
 use App\Http\Requests\DiagnosisRequest;
 use App\Http\Requests\PrescriptionRequest;
 use App\Http\Requests\PatientRecordRequest;
@@ -85,16 +86,12 @@ class AppointmentController extends Controller
         return response()->json(['message' => $appointment], 200);
     }
 
-    public function getDailyAppointment(Request $request)
+    public function getDailyAppointment(DailyAppointmentRequest $request)
     {
+        $data = $request->validated();
 
-        $request->validate([
-            'doctor_name' => 'required|string',
-            'appointment_date' => 'required|date'
-        ]);
-
-        $dailyAppointment = Appointment::where('doctor_id', $this->getDoctorIdByName($request->doctor_name))
-            ->where('appointment_date', $request->appointment_date)->with('patient')->orderBy('appointment_time')->get();
+        $dailyAppointment = Appointment::where('doctor_id', $this->getDoctorIdByName($data['doctor_name']))
+            ->where('appointment_date', $data['appointment_date'])->with('patient')->orderBy('appointment_time')->get();
 
         return $dailyAppointment;
     }
