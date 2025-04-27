@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Http\Requests\AvailableAppointmentRequest;
 use App\Http\Requests\DailyAppointmentRequest;
 use App\Http\Requests\DiagnosisRequest;
 use App\Http\Requests\PrescriptionRequest;
@@ -121,7 +122,43 @@ class AppointmentController extends Controller
 
         return response()->json($appointment, 200);
     }
+    public function A(AvailableAppointmentRequest $request)
+    {
+        $data = $request->validated();
 
+        $existingAppointments = Appointment::where('doctor_id', $this->getDoctorIdByName($data['doctor_name']))
+            ->where('appointment_date', $data['appointment_date'])
+            ->pluck('appointment_time');
+
+        $allTimeSlots = [];
+        $startTime = now()->startOfDay()->setTime(8, 0);
+        $endTime = now()->startOfDay()->setTime(17, 0);
+        $intervalMinutes = (int) $data['interval_minutes'] ?? 30;
+
+        //by now() function i get the current date and time 
+        //by startofDay() function i restart the time 
+        //by setTIme() function i set start time
+
+        $currentTime = $startTime->copy();
+        while ($currentTime <= $endTime) {// its end when the $currentTime is equal or bigger
+            $allTimeSlots[] = $currentTime->format('H:i');//but currentTime but format to look like 00:00
+            $currentTime->addMinutes($intervalMinutes);// increase the currentTime by the min i set 
+        }
+
+        $blockedTimes = [];
+        foreach ($existingAppointments as $time) {
+            $time = Carbon::createFromFormat('H:i:s', $time);
+
+            for ($i = -30; $i <= 30; $i += $intervalMinutes) {
+                $blockedTimes[] = $time->copy()->addMinutes($i)->format('H:i');
+            }
+        }
+
+        $blockedTimess = array_unique($blockedTimes);
+        $availableSlots = array_values(array_diff($allTimeSlots, $blockedTimes));
+
+        return response()->json([$data['appointment_date'] => $availableSlots]);
+    }
 
     public function getDailyAppointment(DailyAppointmentRequest $request)
     {
@@ -137,4 +174,13 @@ class AppointmentController extends Controller
         return DailyAppintmentResource::collection($dailyAppointment);
     }
 
+    public function CancelAppointment($id)
+    {
+        $appointment = Appointment::findOrFail($id);
+        $appointment->delete();
+        return response()->json(['message' => 'Appointment canceled']);
+
+    }
 }
+
+
