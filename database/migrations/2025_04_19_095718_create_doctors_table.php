@@ -15,7 +15,6 @@ return new class extends Migration {
             $table->string('Name');
             $table->string('Specialization');
             $table->enum('Degree', ['Bachelor', 'Master', 'Doctoral']);
-            $table->enum('Available', ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Saturday']);
             $table->timestamps();
         });
     }

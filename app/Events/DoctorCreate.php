@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Doctor;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -10,16 +11,17 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class test
+class DoctorCreate
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    public $doctor;
     /**
      * Create a new event instance.
      */
-    public function __construct()
+    public function __construct(Doctor $doctor)
     {
-        //
+        $this->doctor = $doctor;
     }
 
     /**
