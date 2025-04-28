@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Patient;
 use App\Models\PatientRecord;
@@ -43,5 +44,10 @@ class Doctor extends Model
     public function Appointments(): HasMany
     {
         return $this->hasMany(Appointment::class);
+    }
+
+    public function Schedule(): HasMany
+    {
+        return $this->hasMany(Schedule::class);
     }
 }
