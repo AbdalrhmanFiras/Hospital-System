@@ -11,17 +11,9 @@ class ManagementController extends Controller
 {
     public function DoctorSignin(DoctorRequest $request)
     {
+        $data = $request->validated();
 
-
-        $doctor = Doctor::create([
-            'name' => $request->name,
-            'Specialization' => $request->Specialization,
-            'Degree' => $request->Degree,
-            'Available' => json_encode($request->Available), // Store as JSON
-            // mysql dont accept array soi convert it into string
-            'phone' => $request->phone,
-            'email' => $request->email
-        ]);
+        $doctor = Doctor::create($data);
 
         return response()->json(['message' => 'Doctor signin successfully', 'doctor' => new DoctorResource($doctor)], 200);
 
