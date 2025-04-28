@@ -35,7 +35,8 @@ Route::post('reception/appointment/booking', [AppointmentController::class, 'Cre
 Route::put('reception/appointment/update/{id}', [AppointmentController::class, 'UpdateAppointment']);
 Route::get('reception/appointment/daily', [AppointmentController::class, 'getDailyAppointment']);
 Route::delete('reception/appointment/cancel/{id}', [AppointmentController::class, 'CancelAppointment']);
-Route::get('reception/appointment/free', [AppointmentController::class, 'getAvailableTimes']);
+Route::get('reception/appointment/free-time', [AppointmentController::class, 'getAvailableTimes']);
+Route::get('reception/appointment/available-day', [AppointmentController::class, 'getDoctorAvailableDay']);
 
 
 

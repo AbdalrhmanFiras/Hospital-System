@@ -116,13 +116,11 @@ class AppointmentController extends Controller
         if ($conflictExists) {
             return response()->json(['message' => 'Time slot not available within 30-minute buffer'], 409);
         }
-
-        // No conflict: update the appointment
         $appointment->update($data);
 
         return response()->json($appointment, 200);
     }
-    public function A(AvailableAppointmentRequest $request)
+    public function getAvailableTimes(AvailableAppointmentRequest $request)
     {
         $data = $request->validated();
 
@@ -154,9 +152,9 @@ class AppointmentController extends Controller
             }
         }
 
-        $blockedTimess = array_unique($blockedTimes);
+        $blockedTimess = array_unique($blockedTimes);// remove the duplicate
         $availableSlots = array_values(array_diff($allTimeSlots, $blockedTimes));
-
+        // array_vaules : reindex the array from 0
         return response()->json([$data['appointment_date'] => $availableSlots]);
     }
 
@@ -172,6 +170,17 @@ class AppointmentController extends Controller
         }
 
         return DailyAppintmentResource::collection($dailyAppointment);
+    }
+
+    public function getDoctorAvailableDay(Request $request)
+    {
+
+        $request->validate([
+            'doctor_id' => 'required|string',
+        ]);
+
+        $avilableDay = Doctor::where('id', $request->doctor_id)->pluck('Available');
+        return response()->json($avilableDay);
     }
 
     public function CancelAppointment($id)
