@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AvailableAppointmentRequest;
 use App\Http\Requests\DailyAppointmentRequest;
 use App\Http\Requests\DiagnosisRequest;
+use App\Http\Requests\DoctorAvalibleDayRequest;
 use App\Http\Requests\PrescriptionRequest;
 use App\Http\Requests\PatientRecordRequest;
 use App\Http\Requests\UpdateAppointmentRequest;
@@ -15,15 +16,17 @@ use App\Http\Resources\PatientRecordResource;
 use App\Http\Resources\PrescriptionResource;
 use App\Models\Diagnosis;
 use App\Models\Doctor;
+use App\Models\DoctorSchedule;
 use App\Models\Patient;
 use App\Models\PatientRecord;
 use App\Models\prescription;
 use App\Http\Requests\CreateAppointmentRequest;
 use App\Models\Appointment;
 use Carbon\Carbon;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Http\Request;
 use PhpParser\Node\Stmt\TryCatch;
-
+use App\Http\Resources\DoctorAvalibleDayResource;
 class AppointmentController extends Controller
 {
 
@@ -172,16 +175,17 @@ class AppointmentController extends Controller
         return DailyAppintmentResource::collection($dailyAppointment);
     }
 
-    public function getDoctorAvailableDay(Request $request)
+    public function getDoctorAvailableDay(DoctorAvalibleDayRequest $request)
     {
 
-        $request->validate([
-            'doctor_id' => 'required|string',
-        ]);
+        $data = $request->validated();
 
-        $avilableDay = Doctor::where('id', $request->doctor_id)->pluck('Available');
-        return response()->json($avilableDay);
+        $avilableDay = DoctorSchedule::where('doctor_id', $this->getDoctorIdByName($data['doctor_id']))->get();
+        return response()->json(DoctorAvalibleDayResource::collection($avilableDay));
     }
+
+
+
 
     public function CancelAppointment($id)
     {

@@ -20,7 +20,6 @@ class DoctorResource extends JsonResource
             'Specialization' => $this->Specialization,
             'email' => $this->when(!is_null($this->email), $this->email),
             'phone' => $this->phone,
-            'Available' => $this->Available,
             'join_date' => $this->created_at->format('Y-m-d'),
 
 

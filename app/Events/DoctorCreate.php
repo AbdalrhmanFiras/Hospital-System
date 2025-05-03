@@ -25,7 +25,7 @@ class DoctorCreate
     }
 
     /**
-     * Get the channels the event should broadcast on.
+     * Get the channels the event should broadcast on
      *
      * @return array<int, \Illuminate\Broadcasting\Channel>
      */

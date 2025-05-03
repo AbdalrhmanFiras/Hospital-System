@@ -9,6 +9,7 @@ use App\Models\PatientRecord;
 use App\Models\Diagnosis;
 use App\Models\prescription;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 class Doctor extends Model
 {// ok
 
@@ -46,8 +47,8 @@ class Doctor extends Model
         return $this->hasMany(Appointment::class);
     }
 
-    public function Schedule(): HasMany
+    public function Schedule(): HasOne
     {
-        return $this->hasMany(Schedule::class);
+        return $this->hasOne(DoctorSchedule::class);
     }
 }
