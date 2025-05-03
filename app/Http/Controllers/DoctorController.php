@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Http\Requests\DailyAppointmentRequest;
+use App\Http\Resources\DailyAppintmentResource;
 use App\Http\Requests\DiagnosisRequest;
 use App\Http\Requests\PrescriptionRequest;
 use App\Http\Requests\PatientRecordRequest;
@@ -12,6 +13,7 @@ use App\Http\Resources\PatientRecordResource;
 use App\Http\Resources\PrescriptionResource;
 use App\Models\Diagnosis;
 use App\Models\Doctor;
+use App\Models\Appointment;
 use App\Models\Patient;
 use App\Models\PatientRecord;
 use App\Models\prescription;
@@ -189,6 +191,20 @@ class DoctorController extends Controller
             'message' => 'Prescription Added Successfully',
             'prescription' => new PrescriptionResource($prescription->load('diagnosis')),
         ], 200);
-    }//Done
+    }//Doneß
+
+    public function getDailyAppointment(DailyAppointmentRequest $request)
+    {
+        $data = $request->validated();
+        $dailyAppointment = Appointment::where('doctor_id', $this->getDoctorIdByName($data['doctor_name']))
+            ->where('appointment_date', $data['appointment_date'])
+            ->with('patient')->orderBy('appointment_time')->get();
+
+        if ($dailyAppointment->isEmpty()) {
+            return response()->json(['message' => 'there is time to slot'], 404);
+        }
+
+        return DailyAppintmentResource::collection($dailyAppointment);
+    }
 
 }
