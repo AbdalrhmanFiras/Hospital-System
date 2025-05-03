@@ -91,14 +91,13 @@ class AppointmentController extends Controller
 
         return response()->json(['message' => $appointment], 200);
     }
-    public function UpdateAppointment(UpdateAppointmentRequest $request, $id)
+    public function UpdateAppointment(UpdateAppointmentRequest $request)
     {
         $data = $request->validated();
-        $appointment = Appointment::findOrFail($id);
-
-
         $doctorId = $this->getDoctorIdByName($data['doctor_name']);// if put this in $data it will crush
         $patientId = $this->getPatientIdByName($data['patient_name']);//
+
+        $appointment = Appointment::where('doctor_id', $doctorId)->where('patient_id', $patientId)->where('appointment_date', $request->input('appointment_date'))->first();
 
         $data = [
             'doctor_id' => $doctorId,

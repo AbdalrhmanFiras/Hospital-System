@@ -32,7 +32,7 @@ Route::post('reception/patient/record', [ReceptionController::class, 'CreatePati
 Route::get('reception/doctor-record/{name}', [ReceptionController::class, 'getAllPatientRecord']);
 Route::get('reception/splz/{Specialization}', [AppointmentController::class, 'getDoctorBySplz']);
 Route::post('reception/appointment/booking', [AppointmentController::class, 'CreateAppointment']);
-Route::put('reception/appointment/update/{id}', [AppointmentController::class, 'UpdateAppointment']);
+Route::put('reception/appointment/update', [AppointmentController::class, 'UpdateAppointment']);
 Route::get('reception/appointment/daily', [AppointmentController::class, 'getDailyAppointment']);
 Route::delete('reception/appointment/cancel/{id}', [AppointmentController::class, 'CancelAppointment']);
 Route::get('reception/appointment/free-time', [AppointmentController::class, 'getAvailableTimes']);
