@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DailyWaitingListRequset;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
 use App\Models\Doctor;
@@ -23,5 +24,15 @@ class WaitingListController extends Controller
     }
 
 
+    public function GetDoctorWaitingDailylist(DailyWaitingListRequset $request)
+    {
+        $data = $request->validated();
 
+        $list = Appointment::where('doctor_id', $this->getDoctorIdByName($data['doctor_id']))->where('appointment_date', $data['appointment_date'])
+            ->where('status', 'pending')->orderBy('created_at')
+            ->with('patient:id,name')->get(['id', 'appointment_time', 'patient_id']);
+
+        return response()->json($list);
+
+    }
 }
