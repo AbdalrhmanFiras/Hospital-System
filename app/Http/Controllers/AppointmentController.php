@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Events\AppointmentCreated;
 use App\Http\Requests\AvailableAppointmentRequest;
 use App\Http\Requests\DailyAppointmentRequest;
 use App\Http\Requests\DiagnosisRequest;
@@ -88,7 +89,7 @@ class AppointmentController extends Controller
             }
         }
         $appointment = Appointment::create($data);
-
+        event(new AppointmentCreated($appointment));
         return response()->json(['message' => $appointment], 200);
     }
     public function UpdateAppointment(UpdateAppointmentRequest $request)

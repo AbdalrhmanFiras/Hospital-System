@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Appointment extends Model
 {
@@ -18,6 +19,11 @@ class Appointment extends Model
     public function Doctors(): BelongsTo
     {
         return $this->belongsTo(Doctor::class);
+    }
+
+    public function Queue(): HasOne
+    {
+        return $this->hasOne(QueueEntry::class);
     }
 
     public function patient(): BelongsTo

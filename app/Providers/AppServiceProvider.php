@@ -6,6 +6,12 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
+
+    protected $listen = [
+        AppointmentCreated::class => [
+            AddAppointmentToQueue::class,
+        ],
+    ];
     /**
      * Register any application services.
      */
