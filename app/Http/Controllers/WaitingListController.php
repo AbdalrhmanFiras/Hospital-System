@@ -14,12 +14,14 @@ class WaitingListController extends Controller
 
     public function GetDoctorWaitinglist($doctorname)
     {
-
         $list = Appointment::where('doctor_id', $this->getDoctorIdByName($doctorname))
             ->where('status', 'pending')->orderBy('created_at')
-            ->with('patient:id,name')->get(['id', 'appointment_time', 'patient_id']);
+            ->with('patient:id,name')->get(['id', 'appointment_time', 'patient_id', 'appointment_date']);
 
         return response()->json($list);
 
     }
+
+
+
 }
