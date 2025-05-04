@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\ReceptionController;
 use App\Http\Controllers\ManagementController;
+use App\Http\Controllers\WaitingListController;
 use App\Models\Appointment;
 use App\Models\Doctor;
 use Illuminate\Http\Request;
@@ -38,6 +39,8 @@ Route::get('reception/appointment/daily', [AppointmentController::class, 'getDai
 Route::delete('reception/appointment/cancel/{id}', [AppointmentController::class, 'CancelAppointment']);
 Route::get('reception/appointment/free-time', [AppointmentController::class, 'getAvailableTimes']);
 Route::get('reception/appointment/available-day', [AppointmentController::class, 'getDoctorAvailableDay']);
+Route::get('reception/appointment/list/{doctorname}', [WaitingListController::class, 'GetDoctorWaitinglist']);
+
 
 
 
