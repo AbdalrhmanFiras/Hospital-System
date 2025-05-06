@@ -187,6 +187,8 @@ class DoctorController extends Controller
         }
         $prescription = Prescription::create($prescriptiondata);
 
+        $prescription->status = Appointment::STATUS_PROCESS;
+
         return response()->json([
             'message' => 'Prescription Added Successfully',
             'prescription' => new PrescriptionResource($prescription->load('diagnosis')),

@@ -55,8 +55,6 @@ class AppointmentController extends Controller
     public function CreateAppointment(CreateAppointmentRequest $request)
     {
         $data = $request->validated();
-
-
         $appointmentTime = Carbon::createFromFormat('H:i', $data['appointment_time']);
         $start = $appointmentTime->copy()->subMinutes(30)->format('H:i');
         $end = $appointmentTime->copy()->addMinutes(30)->format('H:i');
@@ -179,29 +177,12 @@ class AppointmentController extends Controller
 
     public function getDoctorAvailableDay(DoctorAvalibleDayRequest $request)
     {
-
         $data = $request->validated();
-
         $avilableDay = DoctorSchedule::where('doctor_id', $this->getDoctorIdByName($data['doctor_id']))->get();
         return response()->json(DoctorAvalibleDayResource::collection($avilableDay));
     }
 
-    public function getDoctorQueue(DoctorQueueRequest $request)
-    {
 
-        $doctor_id = $this->getDoctorIdByName($doctor_name = $request->input('doctor_name'));
-        if (!$doctor_id) {
-            return response()->json(['message' => 'there is no Doctor name like ' . $doctor_name], 404);
-        }
-
-        $queue = QueueEntry::where('queue_entries.doctor_id', $doctor_id)
-            ->join('appointments', 'queue_entries.appointment_id', '=', 'appointments.id')
-            ->orderBy('appointments.appointment_time')
-            ->select('queue_entries.*')
-            ->get();
-        return response()->json($queue);
-
-    }
 
 
     public function CancelAppointment($id)
@@ -209,7 +190,6 @@ class AppointmentController extends Controller
         $appointment = Appointment::findOrFail($id);
         $appointment->delete();
         return response()->json(['message' => 'Appointment canceled']);
-
     }
 }
 
