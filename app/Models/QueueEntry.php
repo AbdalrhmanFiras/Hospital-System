@@ -25,6 +25,5 @@ class QueueEntry extends Model
     }
 
 
-
 }
 

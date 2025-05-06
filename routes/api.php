@@ -28,6 +28,7 @@ Route::post('doctor/prescription', [DoctorController::class, 'Prescription']);
 Route::post('doctor/patient/record', [DoctorController::class, 'CreatePatientRecord']);
 Route::get('doctor/appointment/daily', [DoctorController::class, 'getDailyAppointment']);
 Route::get('doctor/appointment/daily-list/', [WaitingListController::class, 'GetDoctorWaitingDailylist']);
+Route::get('doctor/appointment/queue/', [AppointmentController::class, 'getDoctorQueue']);
 
 //////////////////////////////////////////////Reception
 Route::post('reception/patient', [ReceptionController::class, 'AddPatient']);

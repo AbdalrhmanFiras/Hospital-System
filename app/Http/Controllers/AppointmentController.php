@@ -6,6 +6,7 @@ use App\Http\Requests\AvailableAppointmentRequest;
 use App\Http\Requests\DailyAppointmentRequest;
 use App\Http\Requests\DiagnosisRequest;
 use App\Http\Requests\DoctorAvalibleDayRequest;
+use App\Http\Requests\DoctorQueueRequest;
 use App\Http\Requests\PrescriptionRequest;
 use App\Http\Requests\PatientRecordRequest;
 use App\Http\Requests\UpdateAppointmentRequest;
@@ -23,6 +24,7 @@ use App\Models\PatientRecord;
 use App\Models\prescription;
 use App\Http\Requests\CreateAppointmentRequest;
 use App\Models\Appointment;
+use App\Models\QueueEntry;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Http\Request;
@@ -184,7 +186,22 @@ class AppointmentController extends Controller
         return response()->json(DoctorAvalibleDayResource::collection($avilableDay));
     }
 
+    public function getDoctorQueue(DoctorQueueRequest $request)
+    {
 
+        $doctor_id = $this->getDoctorIdByName($doctor_name = $request->input('doctor_name'));
+        if (!$doctor_id) {
+            return response()->json(['message' => 'there is no Doctor name like ' . $doctor_name], 404);
+        }
+
+        $queue = QueueEntry::where('queue_entries.doctor_id', $doctor_id)
+            ->join('appointments', 'queue_entries.appointment_id', '=', 'appointments.id')
+            ->orderBy('appointments.appointment_time')
+            ->select('queue_entries.*')
+            ->get();
+        return response()->json($queue);
+
+    }
 
 
     public function CancelAppointment($id)
