@@ -105,8 +105,16 @@ class DoctorController extends Controller
             $record = PatientRecord::create($data);
             $record = PatientRecord::with(['doctors', 'Patinets', 'diagnosis', 'prescription'])
                 ->findOrFail($record->id);
+
+            $app_status = $this->getAppointmentStatus(
+                $request->input('doctor_name'),
+                $request->input('patient_name')
+            );
+            $app_status->status = Appointment::STATUS_COMPLETED;
+            $app_status->save();
             return response()->json([
                 'message' => 'Patient Record Created Successfully',
+                'status' => $app_status->status,
                 'record' => new PatientRecordResource($record),
             ], 201);
 
