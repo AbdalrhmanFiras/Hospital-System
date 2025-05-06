@@ -14,7 +14,7 @@ class AddToQueueList
 
 
         QueueEntry::create([
-
+            'doctor_id' => $appointment->doctor_id,
             'appointment_id' => $appointment->id,
             'patient_id' => $appointment->patient->id,
             'patient_name' => $appointment->patient->name,

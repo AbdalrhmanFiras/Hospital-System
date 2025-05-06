@@ -10,6 +10,7 @@ class QueueEntry extends Model
         'patient_name',
         'appointment_id',
         'patient_id',
+        'doctor_id'
     ];
 
 
@@ -22,6 +23,7 @@ class QueueEntry extends Model
     {
         return $this->belongsTo(Patient::class);
     }
+
 
 
 }
