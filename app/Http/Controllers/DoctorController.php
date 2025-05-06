@@ -22,6 +22,17 @@ use Illuminate\Http\Request;
 class DoctorController extends Controller
 {
 
+    public function getAppointmentStatus($doctor_name, $patient_name)
+    {
+
+        $appointment = Appointment::where('doctor_id', $this->getDoctorIdByName($doctor_name))->where(
+            'patient_id',
+            $this->getPatientIdByName($patient_name)
+        )->first();
+
+        return $appointment;
+    }
+
     public function getDoctorIdByName($doctor_name)
     {
         return Doctor::where('name', $doctor_name)->value('id');
@@ -187,10 +198,12 @@ class DoctorController extends Controller
         }
         $prescription = Prescription::create($prescriptiondata);
 
-        $prescription->status = Appointment::STATUS_PROCESS;
-
+        $app_status = $this->getAppointmentStatus($request->input('doctor_name'), $request->input('patient_name'));
+        $app_status->status = Appointment::STATUS_PROCESS;
+        $app_status->save();
         return response()->json([
             'message' => 'Prescription Added Successfully',
+            'status' => $app_status->status,
             'prescription' => new PrescriptionResource($prescription->load('diagnosis')),
         ], 200);
     }//Doneß
