@@ -1,15 +1,27 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\DB;
 
 use App\Http\Requests\DailyWaitingListRequset;
 use App\Models\Appointment;
+use App\Models\AppointmentHistory;
+use App\Models\PatientRecord;
 use Illuminate\Http\Request;
+use App\Http\Requests\DeleteNextAppointmentRequest;
 use App\Models\Doctor;
+use App\Models\Patient;
 use App\Models\QueueEntry;
 use App\Http\Requests\DoctorQueueRequest;
 class WaitingListController extends Controller
 {
+
+
+    public function getPatientIdByName($patient_name)
+    {
+        return Patient::where('name', $patient_name)->value('id');
+    }
+
     public function getDoctorIdByName($doctor_name)
     {
         return Doctor::where('name', $doctor_name)->value('id');
@@ -50,4 +62,37 @@ class WaitingListController extends Controller
         return response()->json($list);
 
     }
+
+    public function DeleteNextAppointment(DeleteNextAppointmentRequest $request)
+    {
+        $data = $request->validated();
+
+        $appointment = Appointment::where('doctor_id', $this->getDoctorIdByName($data['doctor_name']))
+            ->where('patient_id', $this->getPatientIdByName($data['patient_name']))
+            ->first();
+
+        $patient_record = PatientRecord::where('doctor_id', $this->getDoctorIdByName($data['doctor_name']))
+            ->where('patient_id', $this->getPatientIdByName($data['patient_name']))
+            ->first();
+
+        if ($appointment && $patient_record) {
+            DB::beginTransaction();
+            try {
+                $history = AppointmentHistory::create([
+                    'patient_record_id' => $patient_record->id,
+                    'appointment_date' => $appointment->appointment_date,
+                    'appointment_time' => $appointment->appointment_time,
+                ]);
+                $appointment->delete();
+                DB::commit();
+                return response()->json('deleted');
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return response()->json(['error' => $e->getMessage()], 500);
+            }
+        }
+    }
 }
+
+
+

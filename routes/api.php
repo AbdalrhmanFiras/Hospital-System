@@ -30,7 +30,7 @@ Route::get('doctor/appointment/daily', [DoctorController::class, 'getDailyAppoin
 Route::get('doctor/appointment/daily-list/', [WaitingListController::class, 'GetDoctorWaitingDailylist']);
 Route::get('doctor/appointment/queue/', [WaitingListController::class, 'getDoctorQueue']);
 
-//////////////////////////////////////////////Reception
+//////////////////////////////////////////////Reception  
 Route::post('reception/patient', [ReceptionController::class, 'AddPatient']);
 Route::post('reception/patient/record', [ReceptionController::class, 'CreatePatientRecord']);
 Route::get('reception/doctor-record/{name}', [ReceptionController::class, 'getAllPatientRecord']);
@@ -44,6 +44,7 @@ Route::get('reception/appointment/available-day', [AppointmentController::class,
 Route::get('reception/appointment/list/{doctorname}', [WaitingListController::class, 'GetDoctorWaitinglist']);
 Route::get('reception/appointment/daily-list/', [WaitingListController::class, 'GetDoctorWaitingDailylist']);
 Route::get('reception/appointment/queue/', [AppointmentController::class, 'getDoctorQueue']);
+Route::delete('reception/appointment/cancel-next/', [WaitingListController::class, 'DeleteNextAppointment']);
 
 
 
