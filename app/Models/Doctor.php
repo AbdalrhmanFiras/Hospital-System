@@ -10,7 +10,7 @@ use App\Models\Diagnosis;
 use App\Models\prescription;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-class Doctor extends Model
+class Doctor extends Model// extends Authenticatable
 {// ok
 
     protected $fillable = [

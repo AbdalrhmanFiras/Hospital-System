@@ -3,22 +3,29 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use InteractsWithQueue;
 
-class invoices extends Model
+class Invoices extends Model
 {
 
 
     protected $fillable = [
         'patient_id',
-        'appointment_id', // Foreign key linking to appointments table
+        'appointment_id',
         'invoice_number',
         'invoice_date',
         'total_amount',
         'status',
     ];
-    public function Appointment(): HasMany
+    public function Appointment(): BelongsTo
     {
-        return $this->hasMany(Appointment::class);
+        return $this->belongsTo(Appointment::class);
+    }
+    public function patient(): BelongsTo
+    {
+        return $this->belongsTo(Patient::class);
     }
 }
+

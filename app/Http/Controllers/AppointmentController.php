@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 use App\Events\AppointmentCreated;
+use Illuminate\Support\Facades\Notification;
+
 use App\Http\Requests\AvailableAppointmentRequest;
 use App\Http\Requests\DailyAppointmentRequest;
 use App\Http\Requests\DiagnosisRequest;
@@ -26,6 +28,7 @@ use App\Http\Requests\CreateAppointmentRequest;
 use App\Models\Appointment;
 use App\Models\QueueEntry;
 use Carbon\Carbon;
+use App\Notifications\AppointmentReminder;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Http\Request;
 use PhpParser\Node\Stmt\TryCatch;
@@ -55,6 +58,8 @@ class AppointmentController extends Controller
     public function CreateAppointment(CreateAppointmentRequest $request)
     {
         $data = $request->validated();
+
+        $patient = Patient::where('id', $this->getPatientIdByName($data['patient_name']))->first();
         $appointmentTime = Carbon::createFromFormat('H:i', $data['appointment_time']);
         $start = $appointmentTime->copy()->subMinutes(30)->format('H:i');
         $end = $appointmentTime->copy()->addMinutes(30)->format('H:i');
@@ -89,6 +94,7 @@ class AppointmentController extends Controller
             }
         }
         $appointment = Appointment::create($data);
+        Notification::send($patient, new AppointmentReminder($data));
         event(new AppointmentCreated($appointment));
         return response()->json(['message' => $appointment], 200);
     }
@@ -126,7 +132,10 @@ class AppointmentController extends Controller
     public function getAvailableTimes(AvailableAppointmentRequest $request)
     {
         $data = $request->validated();
-
+        $checkingDocotr = $this->getDoctorIdByName($data['doctor_name']);
+        if (!$checkingDocotr) {
+            return response()->json(['message' => 'there is no doctor like ' . $data['doctor_name']], 404);
+        }
         $existingAppointments = Appointment::where('doctor_id', $this->getDoctorIdByName($data['doctor_name']))
             ->where('appointment_date', $data['appointment_date'])
             ->pluck('appointment_time');

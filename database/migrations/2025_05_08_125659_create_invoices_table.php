@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('patient_id')->constrained('patients')->onDelete('cascade');
             $table->foreignId('appointment_id')->nullable()->unique()->constrained('appointments')->onDelete('set null');
-            $table->string('invoice_number')->unique();
+            $table->unsignedBigInteger('invoice_number')->unique();
             $table->date('invoice_date');
             $table->decimal('total_amount', 10, 2)->default(0.00);
             $table->timestamps();

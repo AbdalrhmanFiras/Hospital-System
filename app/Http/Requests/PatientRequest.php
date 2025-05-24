@@ -26,7 +26,7 @@ class PatientRequest extends FormRequest
             'age' => 'required|integer',
             'address' => 'required|string',
             'phone' => 'required|string|min:7',
-            'email' => 'nullable|email|unique',
+            'email' => 'nullable|email|unique:patients,email',
             'gender' => 'required|string|in:male,female'
         ];
     }
