@@ -22,7 +22,11 @@ use Illuminate\Http\Request;
 class DoctorController extends Controller
 {
 
-    public function getAppointmentStatus($doctor_name, $patient_name)
+    public function __construct()
+    {
+        $this->middleware('doctor');
+    }
+    private function getAppointmentStatus($doctor_name, $patient_name)
     {
 
         $appointment = Appointment::where('doctor_id', $this->getDoctorIdByName($doctor_name))->where(
@@ -33,17 +37,17 @@ class DoctorController extends Controller
         return $appointment;
     }
 
-    public function getDoctorIdByName($doctor_name)
+    private function getDoctorIdByName($doctor_name)
     {
         return Doctor::where('name', $doctor_name)->value('id');
     }
 
-    public function getPatientIdByName($patient_name)
+    private function getPatientIdByName($patient_name)
     {
         return Patient::where('name', $patient_name)->value('id');
     }
 
-    public function getDiagnosisByName($diseases_name)
+    private function getDiagnosisByName($diseases_name)
     {
         $diagnosis = Diagnosis::where('diseases_name', $diseases_name)->first(['id', 'doctor_id', 'patient_id']);
         if (!$diagnosis) {
@@ -55,7 +59,7 @@ class DoctorController extends Controller
             'd_patient_id' => $diagnosis->patient_id
         ];
     }
-    public function getPrescriptionByName($medication_name)
+    private function getPrescriptionByName($medication_name)
     {
         $prescription = prescription::where('medication_name', $medication_name)->first(['id', 'doctor_id', 'patient_id']);
         if (!$prescription) {
@@ -192,7 +196,7 @@ class DoctorController extends Controller
 
         $missingdata = [];
 
-        foreach ($missingdata as $key => $value) {
+        foreach ($prescriptiondata as $key => $value) {
             if (!$value && $key !== 'frequency' && $key !== 'dosage_amount') {
                 $missingdata = ucfirst(str_replace('_', ' ', $key));
             }
