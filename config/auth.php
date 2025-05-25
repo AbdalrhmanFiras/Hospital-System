@@ -40,14 +40,14 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-        'doctor' => [
-            'driver' => 'session',
-            'provider' => 'doctors',
-        ],
-        'receptioner' => [
-            'driver' => 'session',
-            'provider' => 'receptioners',
-        ],
+        // 'doctor' => [
+        //     'driver' => 'session',
+        //     'provider' => 'doctors',
+        // ],
+        // 'receptioner' => [
+        //     'driver' => 'session',
+        //     'provider' => 'receptioners',
+        // ],
     ],
 
     /*
@@ -70,23 +70,17 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
+            'model' => App\Models\User::class,
         ],
         'receptioners' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\Receptioner::class),
+            'model' => App\Models\Receptioner::class,
         ],
         'doctors' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\Doctor::class),
+            'model' => App\Models\Doctor::class,
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
     ],
-
     /*
     |--------------------------------------------------------------------------
     | Resetting Passwords

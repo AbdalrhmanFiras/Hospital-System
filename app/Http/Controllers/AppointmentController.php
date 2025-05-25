@@ -34,10 +34,10 @@ use PhpParser\Node\Stmt\TryCatch;
 use App\Http\Resources\DoctorAvalibleDayResource;
 class AppointmentController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('receptioner');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('receptioner');
+    // }
 
     private function getDoctorIdByName($doctor_name)
     {
@@ -60,47 +60,55 @@ class AppointmentController extends Controller
 
     public function CreateAppointment(CreateAppointmentRequest $request)
     {
-        $data = $request->validated();
+        try {
+            $data = $request->validated();
 
-        $patient = Patient::where('id', $this->getPatientIdByName($data['patient_name']))->first();
-        $appointmentTime = Carbon::createFromFormat('H:i', $data['appointment_time']);
-        $start = $appointmentTime->copy()->subMinutes(30)->format('H:i');
-        $end = $appointmentTime->copy()->addMinutes(30)->format('H:i');
-        //false or true
-        $isAvailable = !Appointment::where('doctor_id', $this->getDoctorIdByName($data['doctor_name']))
-            ->where('appointment_date', $data['appointment_date'])
-            ->whereBetween('appointment_time', [$start, $end])->exists();
-        //true or false
-        if (!$isAvailable) {
-            return response()->json(['message' => 'Time slot not available'], 409);
-        }
-
-        $data = [
-            'doctor_id' => $this->getDoctorIdByName($data['doctor_name']),
-            'patient_id' => $this->getPatientIdByName($data['patient_name']),
-            'appointment_date' => $data['appointment_date'],
-            'appointment_time' => $data['appointment_time'],
-        ];
-
-        $missinginfo = [];
-        foreach ($data as $key => $value) {
-            if (!$value) {
-                $missinginfo = ucfirst(str_replace('_', ' ', $key)) . ' not found or invalid';
+            $patient = Patient::where('id', $this->getPatientIdByName($data['patient_name']))->first();
+            $appointmentTime = Carbon::createFromFormat('H:i', $data['appointment_time']);
+            $start = $appointmentTime->copy()->subMinutes(30)->format('H:i');
+            $end = $appointmentTime->copy()->addMinutes(30)->format('H:i');
+            //false or true
+            $isAvailable = !Appointment::where('doctor_id', $this->getDoctorIdByName($data['doctor_name']))
+                ->where('appointment_date', $data['appointment_date'])
+                ->whereBetween('appointment_time', [$start, $end])->exists();
+            //true or false
+            if (!$isAvailable) {
+                return response()->json(['message' => 'Time slot not available'], 409);
             }
 
+            $data = [
+                'doctor_id' => $this->getDoctorIdByName($data['doctor_name']),
+                'patient_id' => $this->getPatientIdByName($data['patient_name']),
+                'appointment_date' => $data['appointment_date'],
+                'appointment_time' => $data['appointment_time'],
+            ];
+
+            $missinginfo = [];
+            foreach ($data as $key => $value) {
+                if (!$value) {
+                    $missinginfo[] = ucfirst(str_replace('_', ' ', $key)) . ' not found or invalid';
+                }
+            }
             if (!empty($missinginfo)) {
                 return response()->json([
                     'message' => 'Validation failed for the following fields:',
-                    'error' => $missinginfo . ' not found'
+                    'error' => implode(', ', $missinginfo)
                 ], 400);
-                ;
             }
+
+            $appointment = Appointment::create($data);
+            Notification::send($patient, new AppointmentReminder($data));
+            event(new AppointmentCreated($appointment));
+            return response()->json(['message' => $appointment], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error creating appointment',
+                'error' => $e->getMessage()
+            ], 500);
         }
-        $appointment = Appointment::create($data);
-        Notification::send($patient, new AppointmentReminder($data));
-        event(new AppointmentCreated($appointment));
-        return response()->json(['message' => $appointment], 200);
+
     }
+
     public function UpdateAppointment(UpdateAppointmentRequest $request)
     {
         $data = $request->validated();

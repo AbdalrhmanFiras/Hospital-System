@@ -33,7 +33,7 @@ Route::middleware('doctor')->prefix('doctor')->group(function () {
     Route::get('appointment/queue/', [WaitingListController::class, 'getDoctorQueue']);
 });
 //////////////////////////////////////////////Reception 
-Route::middleware(['receptioner'])->prefix('reception')->group(function () {
+Route::prefix('reception')->group(function () {
 
     Route::post('patient', [ReceptionController::class, 'AddPatient']);
     Route::post('patient/record', [ReceptionController::class, 'CreatePatientRecord']);

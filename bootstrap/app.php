@@ -13,11 +13,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->alias([
-            'doctor' => \App\Http\Middleware\DoctorMiddleware::class,
-            'receptioner' => \App\Http\Middleware\ReceptionerMiddleware::class,
-            'guard' => \App\Http\Middleware\GaurdMiddleware::class
-        ]);
+        // $middleware->alias([
+        //     'doctor' => \App\Http\Middleware\DoctorMiddleware::class,
+        //     //  'receptioner' => \App\Http\Middleware\ReceptionerMiddleware::class,
+        //     'guard' => \App\Http\Middleware\GaurdMiddleware::class
+        // ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

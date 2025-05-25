@@ -15,7 +15,7 @@ class ScheduleDoctorListener
      */
     public function __construct()
     {
-        //
+
     }
 
     /**
