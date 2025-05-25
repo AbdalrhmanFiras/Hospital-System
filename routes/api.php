@@ -22,6 +22,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 
 
 //////////////////////////////////////////////Doctor  
+//Route::middleware(['auth.doctor_is'])->group(function(){}); later
 Route::get('doctor/{name}/record', [DoctorController::class, 'getPatientRecord']);
 Route::post('doctor/diagnosis', [DoctorController::class, 'Diagnosis']);
 Route::post('doctor/prescription', [DoctorController::class, 'Prescription']);
