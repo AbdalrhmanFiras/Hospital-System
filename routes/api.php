@@ -22,7 +22,6 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 
 
 //////////////////////////////////////////////Doctor  
-//Route::middleware(['auth.doctor_is'])->group(function(){}); later
 Route::middleware('doctor')->prefix('doctor')->group(function () {
     Route::get('{name}/record', [DoctorController::class, 'getPatientRecord']);
     Route::post('diagnosis', [DoctorController::class, 'Diagnosis']);

@@ -16,13 +16,17 @@ use App\Http\Requests\DoctorQueueRequest;
 class WaitingListController extends Controller
 {
 
+    public function __construct()
+    {
+        $this->middleware('receptioner');
+    }
 
-    public function getPatientIdByName($patient_name)
+    private function getPatientIdByName($patient_name)
     {
         return Patient::where('name', $patient_name)->value('id');
     }
 
-    public function getDoctorIdByName($doctor_name)
+    private function getDoctorIdByName($doctor_name)
     {
         return Doctor::where('name', $doctor_name)->value('id');
     }

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 use App\Events\AppointmentCreated;
 use Illuminate\Support\Facades\Notification;
-
 use App\Http\Requests\AvailableAppointmentRequest;
 use App\Http\Requests\DailyAppointmentRequest;
 use App\Http\Requests\DiagnosisRequest;
@@ -35,18 +34,22 @@ use PhpParser\Node\Stmt\TryCatch;
 use App\Http\Resources\DoctorAvalibleDayResource;
 class AppointmentController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('receptioner');
+    }
 
-    public function getDoctorIdByName($doctor_name)
+    private function getDoctorIdByName($doctor_name)
     {
         return Doctor::where('name', $doctor_name)->value('id');
     }
 
-    public function getPatientIdByName($patient_name)
+    private function getPatientIdByName($patient_name)
     {
         return Patient::where('name', $patient_name)->value('id');
     }
 
-    public function getDoctorBySplz(Request $request)
+    private function getDoctorBySplz(Request $request)
     {
         $doctors = Doctor::when($request->Specialization, function ($query, $Specialization) {
             return $query->where('Specialization', $Specialization);
