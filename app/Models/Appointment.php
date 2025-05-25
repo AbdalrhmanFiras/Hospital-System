@@ -37,4 +37,8 @@ class Appointment extends Model
     {
         return $this->belongsTo(invoices::class);
     }
+    public function receptionist(): BelongsTo
+    {
+        return $this->belongsTo(Receptioner::class);
+    }
 }
