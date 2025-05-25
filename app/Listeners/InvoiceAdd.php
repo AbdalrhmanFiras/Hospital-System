@@ -7,13 +7,14 @@ use App\Models\Invoices;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\DB;
+use App\Models\Doctor;
 class InvoiceAdd implements ShouldQueue
 {
     public function handle(AppointmentCreated $event)
     {
         try {
             $appointment = $event->appointment;
-            $appointment->load('patient', 'doctor');
+            $appointment->load(['patient', 'doctor']);
 
             DB::transaction(function () use ($appointment) {
                 $lastInvoiceNumber = Invoices::lockForUpdate()->max('invoice_number') ?? 0;
@@ -24,7 +25,7 @@ class InvoiceAdd implements ShouldQueue
                     'appointment_id' => $appointment->id,
                     'invoice_number' => $newInvoiceNumber,
                     'invoice_date' => now(),
-                    'total_amount' => $appointment->doctor->total_amount
+                    'total_amount' => $appointment->doctor->price
                 ]);
             });
 

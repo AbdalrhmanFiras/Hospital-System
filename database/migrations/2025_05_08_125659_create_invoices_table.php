@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->foreignId('appointment_id')->nullable()->unique()->constrained('appointments')->onDelete('set null');
             $table->unsignedBigInteger('invoice_number')->unique();
             $table->date('invoice_date');
+            $table->decimal('total_amount', 10, 2)->nullable();
             $table->timestamps();
         });
     }
