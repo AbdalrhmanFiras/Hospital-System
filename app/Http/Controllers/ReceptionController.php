@@ -19,20 +19,18 @@ use Illuminate\Http\Request;
 class ReceptionController extends Controller
 {
 
-
-
-    public function getDoctorIdByName($doctor_name)
+    private function getDoctorIdByName($doctor_name)
     {
         return Doctor::where('name', $doctor_name)->value('id');
     }
 
-    public function getPatientIdByName($patient_name)
+    private function getPatientIdByName($patient_name)
     {
         return Patient::where('name', $patient_name)->value('id');
     }
 
 
-    public function getdiagnosisByName($diseases_name)
+    private function getdiagnosisByName($diseases_name)
     {
 
         $diagnosis = Diagnosis::where('diseases_name', $diseases_name)->first(['id', 'doctor_id', 'patient_id']);
@@ -48,7 +46,7 @@ class ReceptionController extends Controller
 
     }
 
-    public function getprescriptionByName($medication_name)
+    private function getprescriptionByName($medication_name)
     {
 
 
@@ -154,33 +152,5 @@ class ReceptionController extends Controller
         ], 200);
 
     }//Done
-    public function index()
-    {
-        //
-    }
 
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }
