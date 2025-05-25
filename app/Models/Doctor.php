@@ -20,6 +20,7 @@ class Doctor extends Model// extends Authenticatable
         'Available',
         'phone',
         'email',
+        'price'
 
     ];
     public function Patients(): HasMany

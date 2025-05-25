@@ -13,7 +13,7 @@ class InvoiceAdd implements ShouldQueue
     {
         try {
             $appointment = $event->appointment;
-            $appointment->load('patient');
+            $appointment->load('patient', 'doctor');
 
             DB::transaction(function () use ($appointment) {
                 $lastInvoiceNumber = Invoices::lockForUpdate()->max('invoice_number') ?? 0;
@@ -24,7 +24,7 @@ class InvoiceAdd implements ShouldQueue
                     'appointment_id' => $appointment->id,
                     'invoice_number' => $newInvoiceNumber,
                     'invoice_date' => now(),
-                    'total_amount' => 0.00
+                    'total_amount' => $appointment->doctor->total_amount
                 ]);
             });
 

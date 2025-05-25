@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('Name');
             $table->string('Specialization');
             $table->enum('Degree', ['Bachelor', 'Master', 'Doctoral']);
+            $table->decimal('price', 10, 2)->default(0.00);
             $table->timestamps();
         });
     }

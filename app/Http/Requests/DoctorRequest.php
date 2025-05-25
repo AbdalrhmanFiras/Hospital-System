@@ -26,8 +26,8 @@ class DoctorRequest extends FormRequest
             'Specialization' => 'required|string',
             'Degree' => 'required|string|in:Bachelor,Master,Doctoral',
             'phone' => 'required|string|min:10',
-            'email' => 'nullable|string|email|unique'
-
+            'email' => 'nullable|string|email|unique',
+            'price' => 'required|numeric|decimal:2,3,4'
 
         ];
     }
