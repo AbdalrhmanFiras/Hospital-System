@@ -44,9 +44,9 @@ return [
             'driver' => 'session',
             'provider' => 'doctors',
         ],
-        'patient' => [
+        'receptioner' => [
             'driver' => 'session',
-            'provider' => 'patients',
+            'provider' => 'receptioners',
         ],
     ],
 
@@ -72,9 +72,9 @@ return [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
-        'patients' => [
+        'receptioners' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\Patient::class),
+            'model' => env('AUTH_MODEL', App\Models\Receptioner::class),
         ],
         'doctors' => [
             'driver' => 'eloquent',

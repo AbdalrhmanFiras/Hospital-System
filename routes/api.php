@@ -23,31 +23,37 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 
 //////////////////////////////////////////////Doctor  
 //Route::middleware(['auth.doctor_is'])->group(function(){}); later
-Route::get('doctor/{name}/record', [DoctorController::class, 'getPatientRecord']);
-Route::post('doctor/diagnosis', [DoctorController::class, 'Diagnosis']);
-Route::post('doctor/prescription', [DoctorController::class, 'Prescription']);
-Route::post('doctor/patient/record', [DoctorController::class, 'CreatePatientRecord']);
-Route::get('doctor/appointment/daily', [DoctorController::class, 'getDailyAppointment']);
-Route::get('doctor/appointment/daily-list/', [WaitingListController::class, 'GetDoctorWaitingDailylist']);
-Route::get('doctor/appointment/queue/', [WaitingListController::class, 'getDoctorQueue']);
+Route::middleware('doctor')->prefix('doctor')->group(function () {
+    Route::get('{name}/record', [DoctorController::class, 'getPatientRecord']);
+    Route::post('diagnosis', [DoctorController::class, 'Diagnosis']);
+    Route::post('prescription', [DoctorController::class, 'Prescription']);
+    Route::post('patient/record', [DoctorController::class, 'CreatePatientRecord']);
+    Route::get('appointment/daily', [DoctorController::class, 'getDailyAppointment']);
 
-//////////////////////////////////////////////Reception  
-Route::post('reception/patient', [ReceptionController::class, 'AddPatient']);
-Route::post('reception/patient/record', [ReceptionController::class, 'CreatePatientRecord']);
-Route::get('reception/doctor-record/{name}', [ReceptionController::class, 'getAllPatientRecord']);
-Route::get('reception/splz/{Specialization}', [AppointmentController::class, 'getDoctorBySplz']);
-Route::post('reception/appointment/booking', [AppointmentController::class, 'CreateAppointment']);
-Route::put('reception/appointment/update', [AppointmentController::class, 'UpdateAppointment']);
-Route::get('reception/appointment/daily', [AppointmentController::class, 'getDailyAppointment']);
-Route::delete('reception/appointment/cancel/{id}', [AppointmentController::class, 'CancelAppointment']);
-Route::get('reception/appointment/free-time', [AppointmentController::class, 'getAvailableTimes']);
-Route::get('reception/appointment/available-day', [AppointmentController::class, 'getDoctorAvailableDay']);
-Route::get('reception/appointment/list/{doctorname}', [WaitingListController::class, 'GetDoctorWaitinglist']);
-Route::get('reception/appointment/daily-list/', [WaitingListController::class, 'GetDoctorWaitingDailylist']);
-Route::get('reception/appointment/queue/', [AppointmentController::class, 'getDoctorQueue']);
-Route::delete('reception/appointment/cancel-next/', [WaitingListController::class, 'DeleteNextAppointment']);
+    Route::get('appointment/daily-list/', [WaitingListController::class, 'GetDoctorWaitingDailylist']);
+    Route::get('appointment/queue/', [WaitingListController::class, 'getDoctorQueue']);
+});
+//////////////////////////////////////////////Reception 
+Route::middleware(['receptioner'])->prefix('reception')->group(function () {
 
+    Route::post('patient', [ReceptionController::class, 'AddPatient']);
+    Route::post('patient/record', [ReceptionController::class, 'CreatePatientRecord']);
+    Route::get('doctor-record/{name}', [ReceptionController::class, 'getAllPatientRecord']);
 
+    Route::get('splz/{Specialization}', [AppointmentController::class, 'getDoctorBySplz']);
+    Route::post('appointment/booking', [AppointmentController::class, 'CreateAppointment']);
+    Route::put('appointment/update', [AppointmentController::class, 'UpdateAppointment']);
+    Route::get('appointment/daily', [AppointmentController::class, 'getDailyAppointment']);
+    Route::delete('appointment/cancel/{id}', [AppointmentController::class, 'CancelAppointment']);
+    Route::get('appointment/free-time', [AppointmentController::class, 'getAvailableTimes']);
+    Route::get('appointment/available-day', [AppointmentController::class, 'getDoctorAvailableDay']);
+    Route::get('appointment/queue/', [AppointmentController::class, 'getDoctorQueue']);
+
+    Route::get('appointment/list/{doctorname}', [WaitingListController::class, 'GetDoctorWaitinglist']);
+    Route::get('appointment/daily-list/', [WaitingListController::class, 'GetDoctorWaitingDailylist']);
+    Route::delete('appointment/cancel-next/', [WaitingListController::class, 'DeleteNextAppointment']);
+
+});
 
 
 //////////////////////////////////////////////Management
