@@ -220,6 +220,7 @@ class DoctorController extends Controller
         ], 200);
     }//Done
 
+
     public function getDailyAppointment(DailyAppointmentRequest $request)
     {
         $data = $request->validated();

@@ -22,6 +22,7 @@ Route::post('/logout', [DoctorAuthController::class, 'logout'])->middleware('aut
 Route::post('/verify-otp', [DoctorAuthController::class, 'verifyOtp']);
 
 
+
 //////////////////////////////////////////////Doctor  
 Route::middleware('doctor')->prefix('doctor')->group(function () {
     Route::get('{name}/record', [DoctorController::class, 'getPatientRecord']);

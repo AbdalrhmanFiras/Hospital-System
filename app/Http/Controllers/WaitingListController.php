@@ -16,10 +16,10 @@ use App\Http\Requests\DoctorQueueRequest;
 class WaitingListController extends Controller
 {
 
-    public function __construct()
-    {
-        $this->middleware('receptioner');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('receptioner');
+    // }
 
     private function getPatientIdByName($patient_name)
     {
@@ -31,15 +31,7 @@ class WaitingListController extends Controller
         return Doctor::where('name', $doctor_name)->value('id');
     }
 
-    public function GetDoctorWaitinglist($doctorname)
-    {
-        $list = Appointment::where('doctor_id', $this->getDoctorIdByName($doctorname))
-            ->where('status', 'pending')->orderBy('created_at')
-            ->with('patient:id,name')->get(['id', 'appointment_time', 'patient_id', 'appointment_date']);
 
-        return response()->json($list);
-
-    }
 
     public function getDoctorQueue(DoctorQueueRequest $request)
     {
@@ -54,12 +46,21 @@ class WaitingListController extends Controller
             ->get();
         return response()->json($queue);
     }
+    public function GetDoctorWaitinglist($doctorname)
+    {
+        $list = Appointment::where('doctor_id', $this->getDoctorIdByName($doctorname))
+            ->where('status', 'pending')->orderBy('created_at')
+            ->with('patient:id,name')->get(['id', 'appointment_time', 'patient_id', 'appointment_date']);
+
+        return response()->json($list);
+
+    }
 
     public function GetDoctorWaitingDailylist(DailyWaitingListRequset $request)
     {
         $data = $request->validated();
 
-        $list = Appointment::where('doctor_id', $this->getDoctorIdByName($data['doctor_id']))->where('appointment_date', $data['appointment_date'])
+        $list = Appointment::where('doctor_id', $this->getDoctorIdByName($data['doctor_name']))->where('appointment_date', $data['appointment_date'])
             ->where('status', 'pending')->orderBy('created_at')
             ->with('patient:id,name')->get(['id', 'appointment_time', 'patient_id']);
 
