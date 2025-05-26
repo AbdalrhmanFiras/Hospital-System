@@ -32,7 +32,7 @@ class DoctorAuthController extends Controller
 
         Mail::to($data['email'])->send(new DoctorOtpMail($otp));
 
-        event(new DoctorCreate($doctor));//Schudel
+        event(new DoctorCreate($doctor));
 
         return response()->json([
             'message' => 'Doctor signin successfully',
@@ -46,7 +46,9 @@ class DoctorAuthController extends Controller
     {
         $data = $request->validated();
         $doctor = Doctor::where('email', $data['email'])->first();
-        $otp = Cache::get('otp', $doctor->email);
+
+        $cacheKey = 'otp' . $doctor->email;
+        $otp = Cache::get($cacheKey);
 
         if (!$otp) {
             return response()->json(['message' => 'OTP expired or not found'], 400);
@@ -54,6 +56,7 @@ class DoctorAuthController extends Controller
         if ($otp != $data['otp']) {
             return response()->json(['message' => 'Invalid OTP'], 400);
         }
+
 
         $doctor->email_verified_at = now();
         $doctor->save();
