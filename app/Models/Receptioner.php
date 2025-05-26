@@ -15,10 +15,13 @@ class Receptioner extends Authenticatable
     protected $fillable = [
         'user_id',
         'first_name',
-        'last_name',
+        'email',
+        'otp',
         'phone_number',
         'address',
         'hire_date',
+        'password',
+        'addres'
     ];
 
     protected $casts = [
