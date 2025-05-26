@@ -16,10 +16,10 @@ use App\Http\Requests\DoctorQueueRequest;
 class WaitingListController extends Controller
 {
 
-    // public function __construct()
-    // {
-    //     $this->middleware('receptioner');
-    // }
+    public function __construct()
+    {
+        $this->middleware('receptioner')->except('GetDoctorWaitingDailylist', 'getDoctorQueue');
+    }
 
     private function getPatientIdByName($patient_name)
     {

@@ -14,12 +14,12 @@ class ReceptionerMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    // public function handle(Request $request, Closure $next): Response
-    //{
-    //if (Auth::guard('receptioner')->check()) {//check if doctor is auth
-    //  return $next($request);
-    //}
+    public function handle(Request $request, Closure $next): Response
+    {
+        if (Auth::guard('receptioner')->check()) {//check if doctor is auth
+            return $next($request);
+        }
 
-    //  return response()->json(['message' => 'Unauthorized: receptioner authentication required.'], 401);
-    //}
+        return response()->json(['message' => 'Unauthorized: receptioner authentication required.'], 401);
+    }
 }

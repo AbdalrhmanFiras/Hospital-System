@@ -18,10 +18,10 @@ use App\Models\prescription;
 use Illuminate\Http\Request;
 class ReceptionController extends Controller
 {
-    // public function __construct()
-    // {
-    //     $this->middleware('receptioner');
-    // }
+    public function __construct()
+    {
+        $this->middleware('receptioner');
+    }
 
     private function getDoctorIdByName($doctor_name)
     {
