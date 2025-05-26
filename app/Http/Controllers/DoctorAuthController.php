@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Http\Requests\DoctorLogoutRequest;
+use App\Http\Requests\VertifyRequest;
 use App\Models\Doctor;
 use App\Mail\DoctorOtpMail;
 use Illuminate\Http\Request;
@@ -32,15 +33,38 @@ class DoctorAuthController extends Controller
         Mail::to($data['email'])->send(new DoctorOtpMail($otp));
 
         event(new DoctorCreate($doctor));//Schudel
-        // event(new Registered($doctor));//verification
-
 
         return response()->json([
             'message' => 'Doctor signin successfully',
             'doctor' => new DoctorResource($doctor),
+            'otp' => 'OTP Send to your email',
             'email_verified' => false
         ], 200);
     }//done
+
+    public function verifyOtp(VertifyRequest $request)
+    {
+        $data = $request->validated();
+        $doctor = Doctor::where('email', $data['email'])->first();
+        $otp = Cache::get('otp', $doctor->email);
+
+        if (!$otp) {
+            return response()->json(['message' => 'OTP expired or not found'], 400);
+        }
+        if ($otp != $data['otp']) {
+            return response()->json(['message' => 'Invalid OTP'], 400);
+        }
+
+        $doctor->email_verified_at = now();
+        $doctor->save();
+
+        Cache::forget('otp_' . $doctor->email);
+
+        return response()->json([
+            'message' => 'Email verified successfully.',
+            'doctor' => new DoctorResource($doctor)
+        ], 200);
+    }
 
 
     public function login(LoginRequest $request)

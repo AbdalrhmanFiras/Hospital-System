@@ -20,8 +20,7 @@ Route::post('/register', [DoctorAuthController::class, 'register']);
 Route::post('/login', [DoctorAuthController::class, 'login']);
 Route::post('/logout', [DoctorAuthController::class, 'logout'])->middleware('auth:sanctum');
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-Route::get('/email/verify', [DoctorAuthController::class, 'verifyEmail'])->name('verification.verify');
-
+Route::post('/verify-otp', [DoctorAuthController::class, 'verifyOtp']);
 // Protected Routes (require authentication)
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [DoctorAuthController::class, 'logout']);
