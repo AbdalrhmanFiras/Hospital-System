@@ -101,10 +101,10 @@ class DoctorAuthController extends Controller
         }
 
 
-        $token = $doctor->createToken('auth-token')->plainTextToken;
+        $token = $doctor->createToken('doctor-token')->plainTextToken;
 
         return response()->json([
-            'message' => 'User login Successfully',
+            'message' => 'Doctor login Successfully',
             'user' => new AuthResource($doctor),
             'token' => $token
         ], 200);

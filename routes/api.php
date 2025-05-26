@@ -7,6 +7,7 @@ use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\ReceptionController;
 use App\Http\Controllers\ManagementController;
 use App\Http\Controllers\WaitingListController;
+use App\Http\Controllers\ReceptionAuthController;
 use App\Models\Appointment;
 use App\Models\Doctor;
 use Illuminate\Http\Request;
@@ -34,6 +35,13 @@ Route::middleware('doctor')->prefix('doctor')->group(function () {
     Route::get('appointment/daily-list/', [WaitingListController::class, 'GetDoctorWaitingDailylist']);
     Route::get('appointment/queue/', [WaitingListController::class, 'getDoctorQueue']);
 });
+
+///////////////////////////////////////////////////////Receptioner Auth///////////////////////////////////////////////////////////////////////////////
+Route::post('/Reception-register', [ReceptionAuthController::class, 'register']);
+Route::post('/Reception-login', [ReceptionAuthController::class, 'login']);
+Route::post('/Reception-logout', [ReceptionAuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::post('/Reception-verify-otp', [ReceptionAuthController::class, 'verifyOtp']);
+
 //////////////////////////////////////////////Reception 
 Route::prefix('reception')->group(function () {
 

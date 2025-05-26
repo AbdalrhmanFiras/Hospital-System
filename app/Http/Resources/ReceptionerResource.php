@@ -17,10 +17,10 @@ class ReceptionerResource extends JsonResource
         return [
             'name' => $this->name,
             'addres' => $this->addres,
-            'hire_date' => $this->hire_date,
+            'hire_date' => $this->created_at->format('Y-m-d'),
             'email' => $this->when(!is_null($this->email), $this->email),
             'phone' => $this->phone,
-            'join_date' => $this->created_at->format('Y-m-d'),
+
         ];
     }
 }
