@@ -44,29 +44,49 @@ class DoctorAuthController extends Controller
 
     public function verifyOtp(VertifyRequest $request)
     {
-        $data = $request->validated();
-        $doctor = Doctor::where('email', $data['email'])->first();
+        try {
+            $data = $request->validated();
+            $doctor = Doctor::where('email', $data['email'])->first();
 
-        $cacheKey = 'otp' . $doctor->email;
-        $otp = Cache::get($cacheKey);
+            if (!$doctor) {
+                return response()->json([
+                    'message' => 'Doctor not found'
+                ], 404);
+            }
 
-        if (!$otp) {
-            return response()->json(['message' => 'OTP expired or not found'], 400);
+            if ($doctor->email_verified_at) {
+                return response()->json(['message' => 'Email is already verified'], 400);
+            }
+
+            $cacheKey = 'otp' . $doctor->email;
+            $cachedOtp = Cache::get($cacheKey);
+
+            if (!$cachedOtp) {
+                return response()->json(['message' => 'OTP expired or not found'], 400);
+            }
+
+            if (!hash_equals((string) $cachedOtp, (string) $data['otp'])) {
+                return response()->json([
+                    'message' => 'Invalid OTP provided'
+                ], 400);
+            }
+
+            $doctor->email_verified_at = now();
+            $doctor->save();
+
+            Cache::forget($cacheKey);
+
+            return response()->json([
+                'message' => 'Email verified successfully.',
+                'doctor' => new DoctorResource($doctor)
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred during OTP verification.',
+                'error' => $e->getMessage()
+            ], 500);
+
         }
-        if ($otp != $data['otp']) {
-            return response()->json(['message' => 'Invalid OTP'], 400);
-        }
-
-
-        $doctor->email_verified_at = now();
-        $doctor->save();
-
-        Cache::forget('otp_' . $doctor->email);
-
-        return response()->json([
-            'message' => 'Email verified successfully.',
-            'doctor' => new DoctorResource($doctor)
-        ], 200);
     }
 
 

@@ -15,18 +15,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
-
+///////////////////////////////////////////////////////Doctor Auth///////////////////////////////////////////////////////////////////////////////
 Route::post('/register', [DoctorAuthController::class, 'register']);
-Route::post('/login', [DoctorAuthController::class, 'login']);
+Route::post('/login', [DoctorAuthController::class, 'login'])->middleware('doctor.email.verified');
 Route::post('/logout', [DoctorAuthController::class, 'logout'])->middleware('auth:sanctum');
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Route::post('/verify-otp', [DoctorAuthController::class, 'verifyOtp']);
-// Protected Routes (require authentication)
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', [DoctorAuthController::class, 'logout']);
-    Route::post('/email/resend', [DoctorAuthController::class, 'resendVerificationEmail']);
-    Route::get('/profile', [DoctorAuthController::class, 'profile']);
-});
+
 
 //////////////////////////////////////////////Doctor  
 Route::middleware('doctor')->prefix('doctor')->group(function () {
