@@ -3,15 +3,22 @@
 namespace App\Models;
 
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Models\Patient;
 use App\Models\PatientRecord;
 use App\Models\Diagnosis;
 use App\Models\prescription;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-class Doctor extends Model// extends Authenticatable
+use Illuminate\Notifications\Notifiable;
+
+class Doctor extends Authenticatable implements MustVerifyEmail
 {// ok
+
+    use Notifiable;
+
 
     protected $fillable = [
         'name',
@@ -20,8 +27,16 @@ class Doctor extends Model// extends Authenticatable
         'Available',
         'phone',
         'email',
-        'price'
+        'price',
+        'password'
+    ];
 
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+    protected $casts = [
+        'email_verified_at' => 'datetime',
     ];
     public function Patients(): HasMany
     {

@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
-
+use HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Doctor;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Patient extends Model
 {// ok
     use Notifiable;
+
 
     protected $fillable = ['name', 'address', 'age', 'phone', 'email', 'gender'];
     public function Doctors(): BelongsTo

@@ -8,30 +8,30 @@ use App\Http\Requests\DailyAppointmentRequest;
 use App\Http\Requests\DiagnosisRequest;
 use App\Http\Requests\DoctorAvalibleDayRequest;
 use App\Http\Requests\DoctorQueueRequest;
+use App\Notifications\AppointmentReminder;
 use App\Http\Requests\PrescriptionRequest;
-use App\Http\Requests\PatientRecordRequest;
+use Illuminate\Console\Scheduling\Schedule;
+use App\Http\Resources\DoctorAvalibleDayResource;
 use App\Http\Requests\UpdateAppointmentRequest;
-use App\Http\Resources\DiagnosisResource;
-use App\Http\Resources\PatientResource;
-use App\Http\Resources\DoctorResource;
+use App\Http\Requests\CreateAppointmentRequest;
 use App\Http\Resources\DailyAppintmentResource;
 use App\Http\Resources\PatientRecordResource;
 use App\Http\Resources\PrescriptionResource;
-use App\Models\Diagnosis;
-use App\Models\Doctor;
+use App\Http\Requests\PatientRecordRequest;
+use App\Http\Resources\DiagnosisResource;
+use App\Http\Resources\PatientResource;
+use App\Http\Resources\DoctorResource;
+use PhpParser\Node\Stmt\TryCatch;
 use App\Models\DoctorSchedule;
-use App\Models\Patient;
 use App\Models\PatientRecord;
 use App\Models\prescription;
-use App\Http\Requests\CreateAppointmentRequest;
+use Illuminate\Http\Request;
 use App\Models\Appointment;
 use App\Models\QueueEntry;
+use App\Models\Diagnosis;
+use App\Models\Patient;
+use App\Models\Doctor;
 use Carbon\Carbon;
-use App\Notifications\AppointmentReminder;
-use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Http\Request;
-use PhpParser\Node\Stmt\TryCatch;
-use App\Http\Resources\DoctorAvalibleDayResource;
 class AppointmentController extends Controller
 {
     // public function __construct()
@@ -106,8 +106,8 @@ class AppointmentController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-
     }
+
 
     public function UpdateAppointment(UpdateAppointmentRequest $request)
     {
@@ -188,8 +188,8 @@ class AppointmentController extends Controller
             ->where('appointment_date', $data['appointment_date'])
             ->with('patient')->orderBy('appointment_time')->get();
 
+        return response()->json(['message' => 'there is time to slot'], 404);
         if ($dailyAppointment->isEmpty()) {
-            return response()->json(['message' => 'there is time to slot'], 404);
         }
 
         return DailyAppintmentResource::collection($dailyAppointment);
@@ -204,7 +204,6 @@ class AppointmentController extends Controller
 
 
 
-
     public function CancelAppointment($id)
     {
         $appointment = Appointment::findOrFail($id);
@@ -212,5 +211,6 @@ class AppointmentController extends Controller
         return response()->json(['message' => 'Appointment canceled']);
     }
 }
+
 
 

@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('Name');
             $table->string('Specialization');
+            $table->string('password');
             $table->enum('Degree', ['Bachelor', 'Master', 'Doctoral']);
             $table->decimal('price', 10, 2)->default(0.00);
             $table->timestamps();
