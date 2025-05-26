@@ -218,7 +218,7 @@ class DoctorController extends Controller
             'status' => $app_status->status,
             'prescription' => new PrescriptionResource($prescription->load('diagnosis')),
         ], 200);
-    }//Doneß
+    }//Done
 
     public function getDailyAppointment(DailyAppointmentRequest $request)
     {

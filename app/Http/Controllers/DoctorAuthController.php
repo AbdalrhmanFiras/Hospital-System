@@ -94,12 +94,13 @@ class DoctorAuthController extends Controller
     {
         $data = $request->validated();
 
+        $doctor = Doctor::where('email', $data['email'])->first();
 
-        if (!Auth::guard('doctor')->attempt(['email' => $data['email'], 'password' => $data['password']])) {
-            return response()->json(['message' => 'invaild email or password'], 401);
+        if (!$doctor || !Hash::check($data['password'], $doctor->password)) {
+            return response()->json(['message' => 'Invalid email or password'], 401);
         }
 
-        $doctor = Doctor::where('email', $data['email'])->firstOrFail();
+
         $token = $doctor->createToken('auth-token')->plainTextToken;
 
         return response()->json([

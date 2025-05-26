@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class prescription extends Model
 {
-    protected $fillable = ['medication_name', 'doctor_name', 'patient_name', 'diagnosis_id', 'dosage_amount', 'frequency', 'duration', 'medication_id', 'doctor_id', 'patient_id', 'diagnosis_name'];
+    protected $fillable = ['medication_name', 'doctor_name', 'patient_name', 'diagnosis_id', 'dosage_amount', 'frequency', 'duration', 'medication_id', 'doctor_id', 'patient_id', 'diagnosis_name', 'status'];
 
     public function Doctors(): BelongsTo
     {

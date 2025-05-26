@@ -41,11 +41,11 @@ return [
             'provider' => 'users',
         ],
         'doctor' => [
-            'driver' => 'session',
+            'driver' => 'sanctum',
             'provider' => 'doctors',
         ],
         'receptioner' => [
-            'driver' => 'session',
+            'driver' => 'sanctum',
             'provider' => 'receptioners',
         ],
     ],
