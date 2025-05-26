@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Http\Requests\DoctorLogoutRequest;
 use App\Models\Doctor;
 use Illuminate\Http\Request;
 use App\Http\Requests\DoctorRequest;
@@ -56,8 +57,15 @@ class DoctorAuthController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
-        return response()->json(['message' => 'the user logout succesfully']);
+
+        if ($request->user()) {
+
+            $request->user()->currentAccessToken()->delete();
+
+            return response()->json(['message' => 'The doctor logged out successfully']);
+        }
+
+        return response()->json(['message' => 'No authenticated doctor to logout.'], 401);
     }
 
 
