@@ -13,11 +13,12 @@ use App\Models\prescription;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class Doctor extends Authenticatable implements MustVerifyEmail
 {// ok
 
-    use Notifiable;
+    use Notifiable, HasApiTokens;
 
 
     protected $fillable = [
@@ -67,4 +68,10 @@ class Doctor extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(DoctorSchedule::class);
     }
+
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new \App\Notifications\DoctorVerifiedEmail);
+    }
+
 }

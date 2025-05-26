@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DoctorAuthController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\ReceptionController;
 use App\Http\Controllers\ManagementController;
@@ -15,11 +16,18 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::post('/register', [DoctorAuthController::class, 'register']);
+Route::post('/login', [DoctorAuthController::class, 'login']);
+Route::post('/logout', [DoctorAuthController::class, 'logout'])->middleware('auth:sanctum');
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Route::get('/email/verify', [DoctorAuthController::class, 'verifyEmail'])->name('verification.verify');
 
+// Protected Routes (require authentication)
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [DoctorAuthController::class, 'logout']);
+    Route::post('/email/resend', [DoctorAuthController::class, 'resendVerificationEmail']);
+    Route::get('/profile', [DoctorAuthController::class, 'profile']);
+});
 
 //////////////////////////////////////////////Doctor  
 Route::middleware('doctor')->prefix('doctor')->group(function () {
