@@ -69,9 +69,9 @@ class Doctor extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(DoctorSchedule::class);
     }
 
-    public function sendEmailVerificationNotification()
-    {
-        $this->notify(new \App\Notifications\DoctorVerifiedEmail);
-    }
+    // public function sendEmailVerificationNotification()
+    // {
+    //     $this->notify(new \App\Notifications\DoctorVerifiedEmail);
+    // }
 
 }

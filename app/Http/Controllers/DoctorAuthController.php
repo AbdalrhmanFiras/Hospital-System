@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Http\Requests\DoctorLogoutRequest;
 use App\Models\Doctor;
+use App\Mail\DoctorOtpMail;
 use Illuminate\Http\Request;
 use App\Http\Requests\DoctorRequest;
 use App\Events\DoctorCreate;
@@ -12,20 +13,26 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\AuthResource;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Mail;
 
 
 class DoctorAuthController extends Controller
 {
-
-
     public function register(DoctorRequest $request)
     {
         $data = $request->validated();
         $data['password'] = Hash::make($data['password']);
         $doctor = Doctor::create($data);
 
+        $otp = mt_rand(100000, 999999);
+
+        Cache::put('otp' . $doctor->email, $otp, now()->addMinutes(5));
+
+        Mail::to($data['email'])->send(new DoctorOtpMail($otp));
+
         event(new DoctorCreate($doctor));//Schudel
-        event(new Registered($doctor));//verification
+        // event(new Registered($doctor));//verification
 
 
         return response()->json([
@@ -69,5 +76,5 @@ class DoctorAuthController extends Controller
     }
 
 
-}
 
+}
