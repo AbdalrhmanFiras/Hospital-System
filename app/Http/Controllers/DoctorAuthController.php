@@ -38,7 +38,9 @@ class DoctorAuthController extends Controller
     public function login(LoginRequest $request)
     {
         $data = $request->validated();
-        if (!Auth::attempt(['email' => $data['email'], 'password' => $data['password']])) {
+
+
+        if (!Auth::guard('doctor')->attempt(['email' => $data['email'], 'password' => $data['password']])) {
             return response()->json(['message' => 'invaild email or password'], 401);
         }
 

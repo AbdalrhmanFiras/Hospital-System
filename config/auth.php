@@ -40,14 +40,14 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-        // 'doctor' => [
-        //     'driver' => 'session',
-        //     'provider' => 'doctors',
-        // ],
-        // 'receptioner' => [
-        //     'driver' => 'session',
-        //     'provider' => 'receptioners',
-        // ],
+        'doctor' => [
+            'driver' => 'session',
+            'provider' => 'doctors',
+        ],
+        'receptioner' => [
+            'driver' => 'session',
+            'provider' => 'receptioners',
+        ],
     ],
 
     /*
