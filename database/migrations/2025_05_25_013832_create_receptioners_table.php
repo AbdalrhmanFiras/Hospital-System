@@ -15,10 +15,8 @@ return new class extends Migration {
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->foreignId('user_id')->unique()->constrained('users')->onDelete('cascade');
-            $table->string('first_name');
-            $table->string('last_name');
-            $table->string('phone_number')->nullable();
+            $table->string('name');
+            $table->string('phone')->nullable();
             $table->string('address')->nullable();
             $table->date('hire_date')->nullable();
             $table->rememberToken();
