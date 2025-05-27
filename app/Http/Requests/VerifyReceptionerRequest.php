@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class VertifyRequest extends FormRequest
+class VerifyReceptionerRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class VertifyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email|exists:doctors,email',
+            'email' => 'required|email|exists:receptioners,email',
             'otp' => 'required|digits:6'
         ];
     }

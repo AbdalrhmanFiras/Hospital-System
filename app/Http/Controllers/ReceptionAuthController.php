@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginReceptionerRequest;
 use App\Http\Requests\RegisterReceptionerRequest;
+use App\Http\Requests\VerifyReceptionerRequest;
 use App\Http\Requests\VertifyRequest;
 use App\Http\Resources\ReceptionerResource;
 use App\Http\Resources\AuthResource;
@@ -35,7 +36,7 @@ class ReceptionAuthController extends Controller
             'email_verified' => false
         ], 200);
     }
-    public function VerifyOtp(VertifyRequest $request)
+    public function VerifyOtp(VerifyReceptionerRequest $request)
     {
         try {
 
