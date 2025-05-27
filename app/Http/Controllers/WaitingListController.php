@@ -8,7 +8,6 @@ use App\Models\Appointment;
 use App\Models\AppointmentHistory;
 use App\Models\PatientRecord;
 use Illuminate\Http\Request;
-use App\Http\Requests\DeleteNextAppointmentRequest;
 use App\Models\Doctor;
 use App\Models\Patient;
 use App\Models\QueueEntry;
@@ -18,7 +17,7 @@ class WaitingListController extends Controller
 
     public function __construct()
     {
-        $this->middleware('receptioner')->except('GetDoctorWaitingDailylist', 'getDoctorQueue');
+        $this->middleware('receptioner')->except('GetDoctorWaitingDailylist', 'getDoctorQueue', );
     }
 
     private function getPatientIdByName($patient_name)
@@ -47,7 +46,7 @@ class WaitingListController extends Controller
         return response()->json($queue);
     }
 
-    public function GetDoctorWaitinglist($doctorname)// All
+    public function GetDoctorWaitinglist($doctorname)// all
     {
         $list = Appointment::where('doctor_id', $this->getDoctorIdByName($doctorname))
             ->where('status', 'pending')->orderBy('created_at')
@@ -69,36 +68,8 @@ class WaitingListController extends Controller
 
     }
 
-    public function DeleteNextAppointment(DeleteNextAppointmentRequest $request)
-    {
-        $data = $request->validated();
-
-        $appointment = Appointment::where('doctor_id', $this->getDoctorIdByName($data['doctor_name']))
-            ->where('patient_id', $this->getPatientIdByName($data['patient_name']))
-            ->first();
-
-        $patient_record = PatientRecord::where('doctor_id', $this->getDoctorIdByName($data['doctor_name']))
-            ->where('patient_id', $this->getPatientIdByName($data['patient_name']))
-            ->first();
-
-        if ($appointment && $patient_record) {
-            DB::beginTransaction();
-            try {
-                $history = AppointmentHistory::create([
-                    'patient_record_id' => $patient_record->id,
-                    'appointment_date' => $appointment->appointment_date,
-                    'appointment_time' => $appointment->appointment_time,
-                ]);
-                $appointment->delete();
-                DB::commit();
-                return response()->json('deleted');
-            } catch (\Exception $e) {
-                DB::rollBack();
-                return response()->json(['error' => $e->getMessage()], 500);
-            }
-        }
-    }
 }
+
 
 
 

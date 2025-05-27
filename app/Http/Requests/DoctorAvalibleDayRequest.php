@@ -22,7 +22,7 @@ class DoctorAvalibleDayRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'doctor_id' => 'required|string',
+            'doctor_name' => 'required|string',
         ];
     }
 }

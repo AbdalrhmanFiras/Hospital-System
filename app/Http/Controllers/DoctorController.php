@@ -9,6 +9,10 @@ use App\Http\Requests\PatientRecordRequest;
 use App\Http\Resources\DiagnosisResource;
 use App\Http\Resources\PatientResource;
 use App\Http\Resources\DoctorResource;
+use App\Http\Requests\DeleteNextAppointmentRequest;
+use Illuminate\Support\Facades\DB;
+use App\Models\AppointmentHistory;
+
 use App\Http\Resources\PatientRecordResource;
 use App\Http\Resources\PrescriptionResource;
 use App\Models\Diagnosis;
@@ -221,6 +225,36 @@ class DoctorController extends Controller
     }//Done
 
 
+    public function DeleteNextAppointment(DeleteNextAppointmentRequest $request)
+    {
+        $data = $request->validated();
+
+        $appointment = Appointment::where('doctor_id', $this->getDoctorIdByName($data['doctor_name']))
+            ->where('patient_id', $this->getPatientIdByName($data['patient_name']))
+            ->first();
+
+        $patient_record = PatientRecord::where('doctor_id', $this->getDoctorIdByName($data['doctor_name']))
+            ->where('patient_id', $this->getPatientIdByName($data['patient_name']))
+            ->first();
+
+        if ($appointment && $patient_record) {
+            DB::beginTransaction();
+            try {
+                $history = AppointmentHistory::create([
+                    'patient_record_id' => $patient_record->id,
+                    'appointment_date' => $appointment->appointment_date,
+                    'appointment_time' => $appointment->appointment_time,
+                ]);
+                $appointment->delete();
+                DB::commit();
+                return response()->json('pateint pass');
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return response()->json(['error' => $e->getMessage()], 500);
+            }
+        }
+    }
+
     public function getDailyAppointment(DailyAppointmentRequest $request)
     {
         $data = $request->validated();
@@ -234,5 +268,7 @@ class DoctorController extends Controller
 
         return DailyAppintmentResource::collection($dailyAppointment);
     }
+
+
 
 }

@@ -198,7 +198,7 @@ class AppointmentController extends Controller
     public function getDoctorAvailableDay(DoctorAvalibleDayRequest $request)
     {
         $data = $request->validated();
-        $avilableDay = DoctorSchedule::where('doctor_id', $this->getDoctorIdByName($data['doctor_id']))->get();
+        $avilableDay = DoctorSchedule::where('doctor_id', $this->getDoctorIdByName($data['doctor_name']))->get();
         return response()->json(DoctorAvalibleDayResource::collection($avilableDay));
     }
 

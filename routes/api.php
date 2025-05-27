@@ -27,6 +27,8 @@ Route::middleware('doctor')->prefix('doctor')->group(function () {
     Route::post('prescription', [DoctorController::class, 'Prescription']);
     Route::post('patient/record', [DoctorController::class, 'CreatePatientRecord']);
     Route::get('appointment/daily', [DoctorController::class, 'getDailyAppointment']);
+    Route::delete('appointment/cancel-next/', [DoctorController::class, 'DeleteNextAppointment']);
+
 
     Route::get('appointment/daily-list/', [WaitingListController::class, 'GetDoctorWaitingDailylist']);
     Route::get('appointment/queue/', [WaitingListController::class, 'getDoctorQueue']);
@@ -57,7 +59,6 @@ Route::prefix('reception')->group(function () {
 
     Route::get('appointment/list/{doctorname}', [WaitingListController::class, 'GetDoctorWaitinglist']);
     Route::get('appointment/daily-list/', [WaitingListController::class, 'GetDoctorWaitingDailylist']);
-    Route::delete('appointment/cancel-next/', [WaitingListController::class, 'DeleteNextAppointment']);
     Route::get('appointment/queue/', [WaitingListController::class, 'getDoctorQueue']);
 
 });
