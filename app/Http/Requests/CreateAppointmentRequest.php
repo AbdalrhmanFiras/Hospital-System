@@ -24,7 +24,7 @@ class CreateAppointmentRequest extends FormRequest
         return [
             'doctor_name' => 'required|string',
             'patient_name' => 'required|string',
-            'appointment_date' => 'required|date',
+            'appointment_date' => 'required|date|after_or_equal:today',
             'appointment_time' => 'required|date_format:H:i'
         ];
     }

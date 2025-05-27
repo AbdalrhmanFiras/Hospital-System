@@ -24,7 +24,7 @@ class RegisterReceptionerRequest extends FormRequest
         return [
             'name' => 'required|string',
             'phone' => 'required|string|min:10',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:receptioners,email',
             'addres' => 'reuired|string',
             'password' => 'required|string|min:8|confirmed'
         ];
