@@ -2,11 +2,12 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Receptioner;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use App\Models\Doctor;
-class DoctorEmailVerified
+
+class ReceptionerEmailVerified
 {
     /**
      * Handle an incoming request.
@@ -15,8 +16,8 @@ class DoctorEmailVerified
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $request->input('email');//from the login
-        $doctor = Doctor::where('email', $request->input('email'))->first();
+        $request->input('email');
+        $doctor = Receptioner::where('email', $request->input('email'))->first();
 
         if (!$doctor) {
             return response()->json([

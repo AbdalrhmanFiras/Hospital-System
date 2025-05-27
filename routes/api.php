@@ -13,15 +13,11 @@ use App\Models\Doctor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
 ///////////////////////////////////////////////////////Doctor Auth///////////////////////////////////////////////////////////////////////////////
 Route::post('/register', [DoctorAuthController::class, 'register']);
 Route::post('/login', [DoctorAuthController::class, 'login'])->middleware('doctor.email.verified');
 Route::post('/logout', [DoctorAuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::post('/verify-otp', [DoctorAuthController::class, 'verifyOtp']);
-
 
 
 //////////////////////////////////////////////Doctor  
@@ -36,11 +32,13 @@ Route::middleware('doctor')->prefix('doctor')->group(function () {
     Route::get('appointment/queue/', [WaitingListController::class, 'getDoctorQueue']);
 });
 
+
 ///////////////////////////////////////////////////////Receptioner Auth///////////////////////////////////////////////////////////////////////////////
-Route::post('/Reception-register', [ReceptionAuthController::class, 'register']);
-Route::post('/Reception-login', [ReceptionAuthController::class, 'login']);
-Route::post('/Reception-logout', [ReceptionAuthController::class, 'logout'])->middleware('auth:sanctum');
-Route::post('/Reception-verify-otp', [ReceptionAuthController::class, 'verifyOtp']);
+Route::post('/reception-register', [ReceptionAuthController::class, 'register']);
+Route::post('/reception-login', [ReceptionAuthController::class, 'login'])->middleware('receptioner.email.verified');
+Route::post('/reception-logout', [ReceptionAuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::post('/reception-verify-otp', [ReceptionAuthController::class, 'verifyOtp']);
+
 
 //////////////////////////////////////////////Reception 
 Route::prefix('reception')->group(function () {
@@ -56,11 +54,11 @@ Route::prefix('reception')->group(function () {
     Route::delete('appointment/cancel/{id}', [AppointmentController::class, 'CancelAppointment']);
     Route::get('appointment/free-time', [AppointmentController::class, 'getAvailableTimes']);
     Route::get('appointment/available-day', [AppointmentController::class, 'getDoctorAvailableDay']);
-    Route::get('appointment/queue/', [AppointmentController::class, 'getDoctorQueue']);
 
     Route::get('appointment/list/{doctorname}', [WaitingListController::class, 'GetDoctorWaitinglist']);
     Route::get('appointment/daily-list/', [WaitingListController::class, 'GetDoctorWaitingDailylist']);
     Route::delete('appointment/cancel-next/', [WaitingListController::class, 'DeleteNextAppointment']);
+    Route::get('appointment/queue/', [WaitingListController::class, 'getDoctorQueue']);
 
 });
 

@@ -13,6 +13,7 @@ use App\Models\Receptioner;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 
+
 use App\Mail\ReceptionerOtpMail;
 class ReceptionAuthController extends Controller
 {
@@ -57,7 +58,7 @@ class ReceptionAuthController extends Controller
                 return response()->json(['message' => 'OTP expired or not found'], 400);
             }
 
-            if (!hash_equals((string) $cacheKey, (string) $data['otp'])) {
+            if (!hash_equals((string) $cacheOtp, (string) $data['otp'])) {
                 return response()->json([
                     'message' => 'Invalid OTP provided'
                 ], 400);
@@ -100,6 +101,19 @@ class ReceptionAuthController extends Controller
             'user' => new AuthResource($Receptioner),
             'token' => $token
         ], 200);
+    }
+
+    public function logout(Request $request)
+    {
+
+        if ($request->user()) {
+
+            $request->user()->currentAccessToken()->delete();
+
+            return response()->json(['message' => 'The Receptioner logged out successfully']);
+        }
+
+        return response()->json(['message' => 'No authenticated doctor to logout.'], 401);
     }
 
 }

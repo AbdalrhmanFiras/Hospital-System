@@ -22,7 +22,7 @@ class VertifyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email|exists:doctors,email',
+            'email' => 'required|email|exists:receptioners,email',
             'otp' => 'required|digits:6'
         ];
     }

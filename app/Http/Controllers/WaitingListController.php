@@ -46,7 +46,8 @@ class WaitingListController extends Controller
             ->get();
         return response()->json($queue);
     }
-    public function GetDoctorWaitinglist($doctorname)
+
+    public function GetDoctorWaitinglist($doctorname)// All
     {
         $list = Appointment::where('doctor_id', $this->getDoctorIdByName($doctorname))
             ->where('status', 'pending')->orderBy('created_at')

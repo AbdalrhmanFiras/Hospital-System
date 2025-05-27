@@ -34,10 +34,10 @@ use App\Models\Doctor;
 use Carbon\Carbon;
 class AppointmentController extends Controller
 {
-    // public function __construct()
-    // {
-    //     $this->middleware('receptioner');
-    // }
+    public function __construct()
+    {
+        $this->middleware('receptioner');
+    }
 
     private function getDoctorIdByName($doctor_name)
     {
